@@ -7,3 +7,6 @@ Madeleine - I am a masters student with a bachelors in chemical engineering. I l
 named Franklin.
 
 Hari - I'm a master's student in computer science and enjoy playing sports whenever I get the chance.
+
+Mazin- I'm a masters student in Computer Science Engineering program. I enjoy tring different foods at restaurants and have a keen interest in new tech and games. I'm interested in app development.
+
