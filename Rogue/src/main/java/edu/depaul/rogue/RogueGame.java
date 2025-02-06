@@ -20,7 +20,7 @@ public class RogueGame extends Application {
      * generates and renders the floor layout, and then displays it within the primary
      * application window.
      *
-     * TODO: render character in here!
+     * TODO: render character in here! character should start at the Start (S) location
      *
      * @param primaryStage      The primary stage for this application, onto which
      *                          the application scene is set.
@@ -55,6 +55,7 @@ public class RogueGame extends Application {
      * Renders the given floor onto the provided GridPane by creating a visual representation
      * of the floor layout using JavaFX Label components. Each tile on the floor is mapped
      * to the grid.
+     *
      *
      * @param floor             The floor object containing the layout to be rendered.
      * @param gridPane          The JavaFX GridPane where the floor layout will be displayed.
