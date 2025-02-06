@@ -15,6 +15,10 @@ public class Tile {
         this.type = type;
     }
 
+    public boolean isWalkable() {
+        return type == TileType.FLOOR;
+    }
+
     /**
      * String representation of the tile
      */

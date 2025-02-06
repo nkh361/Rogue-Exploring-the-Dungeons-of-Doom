@@ -44,13 +44,30 @@ class FloorTest {
 
     @Test
     public void testDungeonFloorStartAndFinish() {
+//        DungeonFloor dungeon = new DungeonFloor(10, 10);
+//
+//        // check start
+//        assertEquals(TileType.START, dungeon.getTile(1, dungeon.getHeight() / 2).getType());
+//
+//        // check finish
+//        assertEquals(TileType.FINISH, dungeon.getTile(dungeon.getWidth() - 2, dungeon.getHeight() / 2).getType());
         DungeonFloor dungeon = new DungeonFloor(10, 10);
 
-        // check start
-        assertEquals(TileType.START, dungeon.getTile(1, dungeon.getHeight() / 2).getType());
+        // find the start and finish positions
+        int[] start = dungeon.findTilePosition(TileType.START);
+        int[] finish = dungeon.findTilePosition(TileType.FINISH);
 
-        // check finish
-        assertEquals(TileType.FINISH, dungeon.getTile(dungeon.getWidth() - 2, dungeon.getHeight() / 2).getType());
+        // make sure the floor has start and finish marks
+        assertNotNull(start);
+        assertNotNull(finish);
+
+        // check walkable
+        assertTrue(dungeon.getTile(start[0], start[1]).isWalkable());
+        assertTrue(dungeon.getTile(finish[0], finish[1]).isWalkable());
+
+        // make sure start and finish are not the same {x,y}
+        assertNotEquals(start[0], finish[0]);
+        assertNotEquals(start[1], finish[1]);
     }
 
     @Test
@@ -62,5 +79,13 @@ class FloorTest {
 
         outOfBounds = dungeon.getTile(10, 10);
         assertEquals(TileType.WALL, outOfBounds.getType());
+    }
+
+    @Test
+    public void testPathPossible() {
+        DungeonFloor dungeon = new DungeonFloor(10, 10);
+
+        // check if the floor is passable
+        assertTrue(dungeon.isPathPossible());
     }
 }

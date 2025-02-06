@@ -11,8 +11,7 @@ public abstract class Floor {
     }
 
     /**
-     * Abstract method will be implemented by a sublclass, it'll define how the floor
-     * layout is generated
+     * Abstract method will be implemented by a sublclass, it'll define how the floor layout is generated.
      */
     protected abstract void generateFloor();
 

@@ -12,8 +12,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class RogueLikeApp extends Application {
+public class RogueGame extends Application {
 
+    /**
+     * Starts the JavaFX application by initializing the stage and scene. This method
+     * creates a grid layout using a GridPane to represent a dungeon-themed floor. It
+     * generates and renders the floor layout, and then displays it within the primary
+     * application window.
+     *
+     * TODO: render character in here!
+     *
+     * @param primaryStage      The primary stage for this application, onto which
+     *                          the application scene is set.
+     */
     @Override
     public void start(Stage primaryStage) {
         // make the GridPane to hold the tiles
@@ -40,6 +51,14 @@ public class RogueLikeApp extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Renders the given floor onto the provided GridPane by creating a visual representation
+     * of the floor layout using JavaFX Label components. Each tile on the floor is mapped
+     * to the grid.
+     *
+     * @param floor             The floor object containing the layout to be rendered.
+     * @param gridPane          The JavaFX GridPane where the floor layout will be displayed.
+     */
     private void renderFloor(Floor floor, GridPane gridPane) {
         int width = floor.getWidth();
         int height = floor.getHeight();
