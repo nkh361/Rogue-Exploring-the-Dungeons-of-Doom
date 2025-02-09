@@ -1,12 +1,15 @@
 package edu.depaul.rogue.floor;
 
 public class Tile {
-    private TileType type;
-
+    protected TileType type;
+    
     public Tile(TileType type) {
-        this.type = type;
+    	this.type = type;
     }
-
+    
+    public Tile() {
+    }
+    
     public TileType getType() {
         return type;
     }
@@ -16,7 +19,7 @@ public class Tile {
     }
 
     public boolean isWalkable() {
-        return type == TileType.FLOOR;
+        return (type == TileType.FLOOR || type == TileType.FINISH);
     }
 
     /**

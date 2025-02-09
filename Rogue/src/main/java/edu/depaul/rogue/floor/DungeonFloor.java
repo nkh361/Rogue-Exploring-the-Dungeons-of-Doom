@@ -5,6 +5,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class DungeonFloor extends Floor {
+	private EventManager eventManager;
 
     public DungeonFloor(int width, int height) {
         super(width, height);
@@ -29,7 +30,7 @@ public class DungeonFloor extends Floor {
      * - The method applies a loop with a maximum number of attempts set to avoid
      * infinite retries in case of failed layouts.
      */
-    private void generatePassableFloor() {
+    public void generatePassableFloor() {
         boolean isPassable = false;
         int attempts = 0;
         int maxAttempts = 150;
@@ -41,6 +42,14 @@ public class DungeonFloor extends Floor {
 //                System.out.println("failed to generate a passable floor after " + attempts + " attempts.");
 //            }
         }
+        
+        // FIXME not sure if passing "this" to constructor is ok
+        this.eventManager = new EventManager(this);
+        
+        int[] finishPos = findTilePosition(TileType.FINISH);
+        int finishX = finishPos[0];
+        int finishY = finishPos[1];
+        this.eventManager.registerEvent((Stairs) grid[finishY][finishX]);
     }
 
     /**
@@ -68,7 +77,8 @@ public class DungeonFloor extends Floor {
 
         // set the start/finish tiles
         grid[startY][startX] = new Tile(TileType.START);
-        grid[finishY][finishX] = new Tile(TileType.FINISH);
+        grid[finishY][finishX] = new Stairs();
+        
 
     }
 
@@ -86,14 +96,14 @@ public class DungeonFloor extends Floor {
 
     boolean isPathPossible() {
         int[] startPos = findTilePosition(TileType.START);
-        int[] finishPos = findTilePosition(TileType.FINISH);
+        int[] finishPos = findTilePosition(TileType.FINISH); 
 
         if (startPos == null || finishPos == null) {
             return false;
         }
 
         Set<String> visited = new HashSet<>();
-        return dfs(startPos[0], startPos[1], finishPos[0], finishPos[1], visited);
+        return dfs(startPos[0], startPos[1], finishPos[0], finishPos[1], visited); 
     }
 
     /**
@@ -111,7 +121,7 @@ public class DungeonFloor extends Floor {
      *                          false otherwise.
      */
     private boolean dfs(int x, int y, int finishX, int finishY, Set<String> visited) {
-        if (x == finishX && y == finishY) {
+        if (x == finishX && y == finishY) { 
             return true;
         }
 
