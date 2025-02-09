@@ -2,6 +2,7 @@ module edu.depaul.rogue {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
+    requires javafx.graphics;
 
     requires org.controlsfx.controls;
     requires com.dlsc.formsfx;
@@ -13,4 +14,5 @@ module edu.depaul.rogue {
 
     opens edu.depaul.rogue to javafx.fxml;
     exports edu.depaul.rogue;
+    exports edu.depaul.rogue.stats to javafx.graphics;
 }
