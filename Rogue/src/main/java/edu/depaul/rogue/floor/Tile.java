@@ -18,8 +18,11 @@ public class Tile {
         this.type = type;
     }
 
+	/**
+	 * All tiles are walkable, except WALL.
+	 */
     public boolean isWalkable() {
-        return (type == TileType.FLOOR || type == TileType.FINISH);
+        return (type != TileType.WALL);
     }
 
     /**

@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Set;
 
 public class DungeonFloor extends Floor {
-	private EventManager eventManager;
+	public EventManager eventManager;
 
     public DungeonFloor(int width, int height) {
         super(width, height);
@@ -77,7 +77,7 @@ public class DungeonFloor extends Floor {
 
         // set the start/finish tiles
         grid[startY][startX] = new Tile(TileType.START);
-        grid[finishY][finishX] = new Stairs();
+        grid[finishY][finishX] = new Stairs(finishX, finishY);
         
 
     }

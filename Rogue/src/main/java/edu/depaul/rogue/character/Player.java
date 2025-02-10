@@ -20,7 +20,7 @@ public class Player {
         int newX = x + dx;
         int newY = y + dy;
 
-        if (dungeon.getTile(newX, newY).getType() == TileType.FLOOR) {
+        if (dungeon.getTile(newX, newY).isWalkable()) {
             x = newX;
             y = newY;
         }
@@ -28,4 +28,5 @@ public class Player {
 
     public int getX() { return x; }
     public int getY() { return y; }
+
 }

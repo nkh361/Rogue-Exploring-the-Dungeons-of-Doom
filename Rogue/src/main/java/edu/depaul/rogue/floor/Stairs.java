@@ -1,11 +1,14 @@
 package edu.depaul.rogue.floor;
 
-public class Stairs extends EventTile {
+import edu.depaul.rogue.character.Player;
 
-	final private TileType type = TileType.FINISH;
+public class Stairs extends EventTile {
+	private int x, y;
+	final private TileType type;
 	
-	public Stairs() {
-		super();
+	public Stairs(int x, int y) {
+		super(x, y);
+		this.type = TileType.FINISH;
 	}
 	
 	@Override
@@ -17,10 +20,16 @@ public class Stairs extends EventTile {
 	public TileType getType() {
 		return type;
 	}
+	
 
-	/*
-	 * public void trigger(DungeonFloor dungeonFloor, Player player) { dungeonFloor.generatePassableFloor(); //
-	 * TODO Place player at start tile // TODO Increment level number }
+	/**
+	 * Defines stair event, which generates a new floor level and places 
+	 * the player at the new start position.
 	 */
+	public void trigger(DungeonFloor dungeonFloor, Player player) {
+		dungeonFloor.generatePassableFloor();
+	}
+	  
+	 
 
 }
