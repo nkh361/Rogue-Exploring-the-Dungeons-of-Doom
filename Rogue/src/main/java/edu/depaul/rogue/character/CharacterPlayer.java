@@ -1,13 +1,14 @@
 package edu.depaul.rogue.character;
 import edu.depaul.rogue.floor.DungeonFloor;
+import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.TileType;
 
-public class Player {
+public class CharacterPlayer {
     private int x, y;
-    private DungeonFloor dungeon;
+    private Floor floor;
 
-    public Player(DungeonFloor dungeon, int startX, int startY) {
-        this.dungeon = dungeon;
+    public CharacterPlayer(Floor floor, int startX, int startY) {
+        this.floor = floor;
         this.x = startX;
         this.y = startY;
     }
@@ -20,7 +21,7 @@ public class Player {
         int newX = x + dx;
         int newY = y + dy;
 
-        if (dungeon.getTile(newX, newY).getType() == TileType.FLOOR) {
+        if (floor.getTile(newX, newY).getType() == TileType.FLOOR) {
             x = newX;
             y = newY;
         }

@@ -44,30 +44,23 @@ class FloorTest {
 
     @Test
     public void testDungeonFloorStartAndFinish() {
-//        DungeonFloor dungeon = new DungeonFloor(10, 10);
-//
-//        // check start
-//        assertEquals(TileType.START, dungeon.getTile(1, dungeon.getHeight() / 2).getType());
-//
-//        // check finish
-//        assertEquals(TileType.FINISH, dungeon.getTile(dungeon.getWidth() - 2, dungeon.getHeight() / 2).getType());
         DungeonFloor dungeon = new DungeonFloor(10, 10);
 
-        // find the start and finish positions
+        // find the start and finish
         int[] start = dungeon.findTilePosition(TileType.START);
         int[] finish = dungeon.findTilePosition(TileType.FINISH);
 
         // make sure the floor has start and finish marks
-        assertNotNull(start);
-        assertNotNull(finish);
+        assertNotNull(start, "Start tile should be placed on the floor");
+        assertNotNull(finish, "Finish tile should be placed on the floor");
 
-        // check walkable
-        assertTrue(dungeon.getTile(start[0], start[1]).isWalkable());
-        assertTrue(dungeon.getTile(finish[0], finish[1]).isWalkable());
+        // check if both the start and finish tiles are walkable
+        assertTrue(dungeon.getTile(start[0], start[1]).isWalkable(), "Start tile should be walkable");
+        assertTrue(dungeon.getTile(finish[0], finish[1]).isWalkable(), "Finish tile should be walkable");
 
-        // make sure start and finish are not the same {x,y}
-        assertNotEquals(start[0], finish[0]);
-        assertNotEquals(start[1], finish[1]);
+        // make sure start and finish are not the same {x, y}
+        assertNotEquals(start[0], finish[0], "Start and finish should not share the same X coordinate");
+        assertNotEquals(start[1], finish[1], "Start and finish should not share the same Y coordinate");
     }
 
     @Test
@@ -84,8 +77,8 @@ class FloorTest {
     @Test
     public void testPathPossible() {
         DungeonFloor dungeon = new DungeonFloor(10, 10);
-
+        dungeon.generatePassableFloor();
         // check if the floor is passable
-        assertTrue(dungeon.isPathPossible());
+        assertTrue(dungeon.isPathPossible(), "path should be possible between start and finish");
     }
 }

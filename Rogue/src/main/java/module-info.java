@@ -11,6 +11,7 @@ module edu.depaul.rogue {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.desktop;
 
     opens edu.depaul.rogue to javafx.fxml;
     exports edu.depaul.rogue;

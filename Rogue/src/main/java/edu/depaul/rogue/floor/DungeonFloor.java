@@ -29,7 +29,7 @@ public class DungeonFloor extends Floor {
      * - The method applies a loop with a maximum number of attempts set to avoid
      * infinite retries in case of failed layouts.
      */
-    private void generatePassableFloor() {
+    public void generatePassableFloor() {
         boolean isPassable = false;
         int attempts = 0;
         int maxAttempts = 150;

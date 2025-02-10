@@ -16,7 +16,7 @@ public class Tile {
     }
 
     public boolean isWalkable() {
-        return type == TileType.FLOOR;
+        return type == TileType.FLOOR || type == TileType.START || type == TileType.FINISH;
     }
 
     /**
