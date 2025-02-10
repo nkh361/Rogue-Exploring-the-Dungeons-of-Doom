@@ -77,6 +77,7 @@ public class RogueGame extends Application {
             return;
         }
 
+
 //        // find the starting tile
 //        int startX = -1, startY = -1;
 //        for (int y = 0; y < floor.getHeight(); y++) {
