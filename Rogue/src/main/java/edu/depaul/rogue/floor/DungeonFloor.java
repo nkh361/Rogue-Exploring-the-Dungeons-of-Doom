@@ -3,16 +3,11 @@ package edu.depaul.rogue.floor;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import edu.depaul.rogue.EventManager;
 
 public class DungeonFloor extends Floor {
-	public Tile start;
-	public Stairs finish;
-	private EventManager eventManager;
 
-    public DungeonFloor(int width, int height, EventManager eventManager) {
+    public DungeonFloor(int width, int height) {
         super(width, height);
-        this.eventManager = eventManager;
         generatePassableFloor();
     }
 
@@ -46,8 +41,6 @@ public class DungeonFloor extends Floor {
 //                System.out.println("failed to generate a passable floor after " + attempts + " attempts.");
 //            }
         }
-        
-
     }
 
     /**
@@ -74,12 +67,8 @@ public class DungeonFloor extends Floor {
         } while ((finishX == startX && finishY == startY) || !grid[finishY][finishX].isWalkable());
 
         // set the start/finish tiles
-        grid[startY][startX] = new Tile(startX, startY);
-        this.start = grid[startY][startX];
-        start.setType(TileType.START);
-        grid[finishY][finishX] = new Stairs(finishX, finishY, eventManager);
-        this.finish = (Stairs) grid[finishY][finishX];
-        
+        grid[startY][startX] = new Tile(TileType.START);
+        grid[finishY][finishX] = new Tile(TileType.FINISH);
 
     }
 
@@ -97,14 +86,14 @@ public class DungeonFloor extends Floor {
 
     boolean isPathPossible() {
         int[] startPos = findTilePosition(TileType.START);
-        int[] finishPos = findTilePosition(TileType.FINISH); 
+        int[] finishPos = findTilePosition(TileType.FINISH);
 
         if (startPos == null || finishPos == null) {
             return false;
         }
 
         Set<String> visited = new HashSet<>();
-        return dfs(startPos[0], startPos[1], finishPos[0], finishPos[1], visited); 
+        return dfs(startPos[0], startPos[1], finishPos[0], finishPos[1], visited);
     }
 
     /**
@@ -122,7 +111,7 @@ public class DungeonFloor extends Floor {
      *                          false otherwise.
      */
     private boolean dfs(int x, int y, int finishX, int finishY, Set<String> visited) {
-        if (x == finishX && y == finishY) { 
+        if (x == finishX && y == finishY) {
             return true;
         }
 

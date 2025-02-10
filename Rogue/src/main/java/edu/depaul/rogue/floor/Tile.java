@@ -1,18 +1,12 @@
 package edu.depaul.rogue.floor;
 
 public class Tile {
-    protected TileType type;
-    protected int x, y;
-    
+    private TileType type;
+
     public Tile(TileType type) {
-    	this.type = type;
+        this.type = type;
     }
-    
-    public Tile(int x, int y) {
-    	this.x = x;
-    	this.y = y;
-    }
-    
+
     public TileType getType() {
         return type;
     }
@@ -20,17 +14,9 @@ public class Tile {
     public void setType(TileType type) {
         this.type = type;
     }
-    
-    public int[] getTilePosition() {
-    	int[] tilePosition = {this.x, this.y};
-    	return tilePosition;
-    }
 
-	/**
-	 * All tiles are walkable, except WALL.
-	 */
     public boolean isWalkable() {
-        return (type != TileType.WALL);
+        return type == TileType.FLOOR || type == TileType.START || type == TileType.FINISH;
     }
 
     /**

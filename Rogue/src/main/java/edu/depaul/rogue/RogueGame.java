@@ -27,7 +27,6 @@ public class RogueGame extends Application {
     private GridPane gridPane;
     private Floor floor;
     private Label playerLabel;
-    private EventManager eventManager;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -66,42 +65,35 @@ public class RogueGame extends Application {
         gridPane = new GridPane();
         gridPane.setHgap(2);
         gridPane.setVgap(2);
-        
-        // create EventManager instance
-        eventManager = new EventManager();
 
         // create a floor and generate it
-        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+        floor = FloorFactory.createFloor("dungeon", 10, 10);
         if (floor == null) {
             System.out.println("Failed to create floor.");
             return;
         }
 
+        // find the starting tile
+        int startX = -1, startY = -1;
+        for (int y = 0; y < floor.getHeight(); y++) {
+            for (int x = 0; x < floor.getWidth(); x++) {
+                Tile tile = floor.getTile(x, y);
+                if (tile.toString().equals("S")) {
+                    startX = x;
+                    startY = y;
+                    break;
+                }
+            }
+            if (startX != -1 && startY != -1) break;
+        }
 
-//        // find the starting tile
-//        int startX = -1, startY = -1;
-//        for (int y = 0; y < floor.getHeight(); y++) {
-//            for (int x = 0; x < floor.getWidth(); x++) {
-//                Tile tile = floor.getTile(x, y);
-//                if (tile.toString().equals("S")) {
-//                    startX = x;
-//                    startY = y;
-//                    break;
-//                }
-//            }
-//            if (startX != -1 && startY != -1) break;
-//        }
-//
-//        if (startX == -1 || startY == -1) {
-//            System.out.println("No starting tile 'S' found.");
-//            return;
-//        }
+        if (startX == -1 || startY == -1) {
+            System.out.println("No starting tile 'S' found.");
+            return;
+        }
 
-        // initialize the player and place at start
-        player = CharacterFactory.createPlayer(floor, 1, 1);
-        player.moveToStart();
-        
-        eventManager.setPlayer(player);
+        // initialize the player
+        player = CharacterFactory.createPlayer(floor, startX, startY);
 
         // render the floor in the GridPane
         renderFloor(floor, gridPane);
@@ -170,7 +162,6 @@ public class RogueGame extends Application {
 
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
-     * After player moves, check for event tile.
      *
      * @param event         Event handler for keyboard.
      */
@@ -185,8 +176,6 @@ public class RogueGame extends Application {
         renderFloor(floor, gridPane);
 
         renderPlayer();
-        
-        eventManager.triggerEvent(floor);
     }
 
     public static void main(String[] args) {
