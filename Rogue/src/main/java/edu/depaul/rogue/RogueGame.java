@@ -3,16 +3,21 @@ package edu.depaul.rogue;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.stats.StatsManager;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class RogueGame extends Application {
+    private ProgressBar healthBar;
+    private Label healthLabel;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -27,6 +32,26 @@ public class RogueGame extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
+        // character stats
+        StatsManager statsManager = new StatsManager(100);
+        healthBar = new ProgressBar();
+        healthBar.progressProperty().bind(statsManager.getHealthStat().currentHealthProperty().divide(100));
+        healthBar.setPrefWidth(100);
+
+        healthLabel = new Label();
+        healthLabel.textProperty().bind(statsManager.getHealthStat().currentHealthProperty().asString("HP: %d/100"));
+
+        BorderPane root = new BorderPane();
+
+        GridPane healthPane = new GridPane();
+        healthPane.setHgap(10);
+        healthPane.add(healthLabel, 0, 0);
+        healthPane.add(healthBar, 1, 0);
+
+        // align healthPane to bottom left
+        root.setBottom(healthPane);
+        BorderPane.setAlignment(healthPane, Pos.BOTTOM_LEFT);
+
         // make the GridPane to hold the tiles
         GridPane gridPane = new GridPane();
 
@@ -44,8 +69,10 @@ public class RogueGame extends Application {
         // render the floor in the GridPane
         renderFloor(floor, gridPane);
 
+        root.setCenter(gridPane);
+
         // set up the scene and stage
-        Scene scene = new Scene(gridPane, 400, 400);
+        Scene scene = new Scene(root, 400, 400);
         primaryStage.setTitle("Rogue: Exploring the Dungeons of Doom");
         primaryStage.setScene(scene);
         primaryStage.show();
