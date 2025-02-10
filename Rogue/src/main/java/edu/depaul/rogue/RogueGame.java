@@ -78,28 +78,26 @@ public class RogueGame extends Application {
         }
 
 
-//        // find the starting tile
-//        int startX = -1, startY = -1;
-//        for (int y = 0; y < floor.getHeight(); y++) {
-//            for (int x = 0; x < floor.getWidth(); x++) {
-//                Tile tile = floor.getTile(x, y);
-//                if (tile.toString().equals("S")) {
-//                    startX = x;
-//                    startY = y;
-//                    break;
-//                }
-//            }
-//            if (startX != -1 && startY != -1) break;
-//        }
-//
-//        if (startX == -1 || startY == -1) {
-//            System.out.println("No starting tile 'S' found.");
-//            return;
-//        }
+        // find the starting tile
+        int startX = -1, startY = -1;
+        for (int y = 0; y < floor.getHeight(); y++) {
+            for (int x = 0; x < floor.getWidth(); x++) {
+                Tile tile = floor.getTile(x, y);
+                if (tile.toString().equals("S")) {
+                    startX = x;
+                    startY = y;
+                    break;
+                }
+            }
+            if (startX != -1 && startY != -1) break;
+        }
 
-        // initialize the player and place at start
-        player = CharacterFactory.createPlayer(floor, 1, 1);
-        player.moveToStart();
+        if (startX == -1 || startY == -1) {
+            System.out.println("No starting tile 'S' found.");
+            return;
+        }
+
+        player = CharacterFactory.createPlayer(floor, startX, startY);
         
         eventManager.setPlayer(player);
 

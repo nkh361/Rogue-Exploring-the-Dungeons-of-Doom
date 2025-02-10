@@ -25,6 +25,11 @@ public class Tile {
     	int[] tilePosition = {this.x, this.y};
     	return tilePosition;
     }
+    
+    public void setTilePosition(int x, int y) {
+    	this.x = x;
+    	this.y = y;
+    }
 
 	/**
 	 * All tiles are walkable, except WALL.

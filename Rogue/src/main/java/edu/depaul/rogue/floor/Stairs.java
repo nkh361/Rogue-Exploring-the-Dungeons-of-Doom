@@ -20,7 +20,12 @@ public class Stairs extends EventTile {
 
 	@Override
 	public TileType getType() {
-		return type;
+		return TileType.FINISH;
+	}
+	
+	@Override
+	public String toString() {
+		return "F";
 	}
 	
 

@@ -74,9 +74,9 @@ public class DungeonFloor extends Floor {
         } while ((finishX == startX && finishY == startY) || !grid[finishY][finishX].isWalkable());
 
         // set the start/finish tiles
-        grid[startY][startX] = new Tile(startX, startY);
+        grid[startY][startX] = new Tile(TileType.START);
         this.start = grid[startY][startX];
-        start.setType(TileType.START);
+        this.start.setTilePosition(startX, startY);
         grid[finishY][finishX] = new Stairs(finishX, finishY, eventManager);
         this.finish = (Stairs) grid[finishY][finishX];
         
