@@ -3,12 +3,16 @@ package edu.depaul.rogue.floor;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import edu.depaul.rogue.EventManager;
 
 public class DungeonFloor extends Floor {
-	public EventManager eventManager;
+	public Tile start;
+	public Stairs finish;
+	private EventManager eventManager;
 
-    public DungeonFloor(int width, int height) {
+    public DungeonFloor(int width, int height, EventManager eventManager) {
         super(width, height);
+        this.eventManager = eventManager;
         generatePassableFloor();
     }
 
@@ -43,13 +47,7 @@ public class DungeonFloor extends Floor {
 //            }
         }
         
-        // FIXME not sure if passing "this" to constructor is ok
-        this.eventManager = new EventManager(this);
-        
-        int[] finishPos = findTilePosition(TileType.FINISH);
-        int finishX = finishPos[0];
-        int finishY = finishPos[1];
-        this.eventManager.registerEvent((Stairs) grid[finishY][finishX]);
+
     }
 
     /**
@@ -76,8 +74,11 @@ public class DungeonFloor extends Floor {
         } while ((finishX == startX && finishY == startY) || !grid[finishY][finishX].isWalkable());
 
         // set the start/finish tiles
-        grid[startY][startX] = new Tile(TileType.START);
-        grid[finishY][finishX] = new Stairs(finishX, finishY);
+        grid[startY][startX] = new Tile(startX, startY);
+        this.start = grid[startY][startX];
+        start.setType(TileType.START);
+        grid[finishY][finishX] = new Stairs(finishX, finishY, eventManager);
+        this.finish = (Stairs) grid[finishY][finishX];
         
 
     }

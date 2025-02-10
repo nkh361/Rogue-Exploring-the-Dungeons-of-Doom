@@ -1,18 +1,24 @@
 package edu.depaul.rogue.character;
 
 import edu.depaul.rogue.floor.DungeonFloor;
+import edu.depaul.rogue.floor.Floor;
+import edu.depaul.rogue.floor.FloorFactory;
+import edu.depaul.rogue.EventManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PlayerTest {
-    private DungeonFloor dungeon;
-    private Player player;
+    private Floor floor;
+    private CharacterPlayer player;
+    private EventManager eventManager;
 
     @BeforeEach
     void setup() {
-        dungeon = new DungeonFloor(10, 10);
-        player = new Player(dungeon, 2, 2);
+    	eventManager = new EventManager();
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+        player = new CharacterPlayer(floor, 2, 2);
     }
 
     @Test

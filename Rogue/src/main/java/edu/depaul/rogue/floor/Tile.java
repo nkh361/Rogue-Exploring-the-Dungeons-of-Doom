@@ -2,12 +2,15 @@ package edu.depaul.rogue.floor;
 
 public class Tile {
     protected TileType type;
+    protected int x, y;
     
     public Tile(TileType type) {
     	this.type = type;
     }
     
-    public Tile() {
+    public Tile(int x, int y) {
+    	this.x = x;
+    	this.y = y;
     }
     
     public TileType getType() {
@@ -16,6 +19,11 @@ public class Tile {
 
     public void setType(TileType type) {
         this.type = type;
+    }
+    
+    public int[] getTilePosition() {
+    	int[] tilePosition = {this.x, this.y};
+    	return tilePosition;
     }
 
 	/**

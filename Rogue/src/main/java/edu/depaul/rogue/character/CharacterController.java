@@ -4,10 +4,10 @@ import edu.depaul.rogue.floor.DungeonFloor;
 import javafx.scene.input.KeyEvent;
 
 public class CharacterController {
-    private Player player;
+    private CharacterPlayer player;
     private DungeonFloor dungeon;
 
-    public CharacterController(DungeonFloor dungeon, Player player) {
+    public CharacterController(DungeonFloor dungeon, CharacterPlayer player) {
         this.dungeon = dungeon;
         this.player = player;
     }
