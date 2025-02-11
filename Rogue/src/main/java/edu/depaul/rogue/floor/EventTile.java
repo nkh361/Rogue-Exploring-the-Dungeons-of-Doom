@@ -10,16 +10,15 @@ public abstract class EventTile extends Tile {
 	
 	public EventTile(int x, int y, EventManager eventManager) {
 		super(x, y);
+		this.x = x;
+		this.y = y;
 		this.eventManager = eventManager;
 		eventManager.registerEvent(this);
 	}
 	
 	public abstract void trigger(DungeonFloor dungeon, CharacterPlayer player);
 	
-	public int[] getTilePosition() {
-		int[] tilePos = {this.x, this.y};
-		return tilePos;
-	}
+
 
 
 

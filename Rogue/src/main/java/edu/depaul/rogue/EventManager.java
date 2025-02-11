@@ -1,6 +1,7 @@
 package edu.depaul.rogue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import edu.depaul.rogue.character.CharacterPlayer;
 import edu.depaul.rogue.floor.*;
 
@@ -43,7 +44,8 @@ public class EventManager {
 		if (floor instanceof DungeonFloor) {
 			DungeonFloor dungeon = (DungeonFloor) floor;
 			for (EventTile tile : events) {
-				if (tile.getTilePosition() == playerPos) {
+				int[] tilePos = tile.getTilePosition();
+				if (Arrays.equals(playerPos, tilePos)) {
 					tile.trigger(dungeon, player);
 					return true;
 				}

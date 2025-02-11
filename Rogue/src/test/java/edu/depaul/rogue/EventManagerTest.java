@@ -36,8 +36,12 @@ public class EventManagerTest {
 		int[] EventPos = TestTile.getTilePosition();
 		// Place player on Stairs Tile
 		CharacterPlayer TestPlayer = new CharacterPlayer(dungeon, EventPos[0], EventPos[1]);
+		eventManager.setPlayer(TestPlayer);
+
+		assertEquals(EventPos[0], TestPlayer.getX(), "Player is not on Stairs.");
+		assertEquals(EventPos[1], TestPlayer.getY(), "Player is not on Stairs.");
 		
-//		assertTrue(TestEventMgr.triggerEvent(TestPlayer), "Event was not triggered.");
+		assertTrue(eventManager.triggerEvent(dungeon), "Event was not triggered.");
 		
 	}
 }

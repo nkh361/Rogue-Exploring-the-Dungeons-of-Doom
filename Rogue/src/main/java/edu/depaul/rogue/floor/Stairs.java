@@ -4,12 +4,15 @@ import edu.depaul.rogue.character.CharacterPlayer;
 import edu.depaul.rogue.EventManager;
 
 public class Stairs extends EventTile {
-	private int x, y;
-	final private TileType type;
-	private EventManager eventManager;
+	protected int x, y;
+	final protected TileType type;
+	protected EventManager eventManager;
 	
 	public Stairs(int x, int y, EventManager eventManager) {
 		super(x, y, eventManager);
+		this.x = x;
+		this.y = y;
+		this.eventManager = eventManager;
 		this.type = TileType.FINISH;
 	}
 	
@@ -27,6 +30,7 @@ public class Stairs extends EventTile {
 	public String toString() {
 		return "F";
 	}
+	
 	
 
 	/**

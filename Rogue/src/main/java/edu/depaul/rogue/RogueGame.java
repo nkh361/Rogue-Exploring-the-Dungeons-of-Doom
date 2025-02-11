@@ -169,6 +169,7 @@ public class RogueGame extends Application {
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
      * After player moves, check for event tile.
+     * FIXME: Need a method to clear floor before rendering new level floor.
      *
      * @param event         Event handler for keyboard.
      */
@@ -184,7 +185,10 @@ public class RogueGame extends Application {
 
         renderPlayer();
         
-        eventManager.triggerEvent(floor);
+        if (eventManager.triggerEvent(floor)) {
+        	renderFloor(floor, gridPane);
+        	renderPlayer();
+        }
     }
 
     public static void main(String[] args) {
