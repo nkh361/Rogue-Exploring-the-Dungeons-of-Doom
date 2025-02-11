@@ -9,7 +9,7 @@ public class Dice {
 	public static int roll(int nDice, int nSides) {
 		int total = 0;
 		for (int i = 0; i < nDice; i++) {
-			total += random.nextInt(nSides);
+			total += random.nextInt(nSides) + 1;
 		}
 		return total;
 	}
