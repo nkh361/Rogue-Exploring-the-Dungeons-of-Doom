@@ -27,6 +27,7 @@ public class RogueGame extends Application {
     private GridPane gridPane;
     private Floor floor;
     private Label playerLabel;
+    private EventManager eventManager;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -65,13 +66,17 @@ public class RogueGame extends Application {
         gridPane = new GridPane();
         gridPane.setHgap(2);
         gridPane.setVgap(2);
+        
+        // create EventManager instance
+        eventManager = new EventManager();
 
         // create a floor and generate it
-        floor = FloorFactory.createFloor("dungeon", 10, 10);
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
         if (floor == null) {
             System.out.println("Failed to create floor.");
             return;
         }
+
 
         // find the starting tile
         int startX = -1, startY = -1;
@@ -92,8 +97,9 @@ public class RogueGame extends Application {
             return;
         }
 
-        // initialize the player
         player = CharacterFactory.createPlayer(floor, startX, startY);
+        
+        eventManager.setPlayer(player);
 
         // render the floor in the GridPane
         renderFloor(floor, gridPane);
@@ -162,6 +168,8 @@ public class RogueGame extends Application {
 
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
+     * After player moves, check for event tile.
+     * FIXME: Need a method to clear floor before rendering new level floor.
      *
      * @param event         Event handler for keyboard.
      */
@@ -176,6 +184,11 @@ public class RogueGame extends Application {
         renderFloor(floor, gridPane);
 
         renderPlayer();
+        
+        if (eventManager.triggerEvent(floor)) {
+        	renderFloor(floor, gridPane);
+        	renderPlayer();
+        }
     }
 
     public static void main(String[] args) {

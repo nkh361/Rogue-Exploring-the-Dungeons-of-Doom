@@ -1,9 +1,11 @@
 package edu.depaul.rogue.character;
+
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
-import edu.depaul.rogue.floor.TileType;
+import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.combat.Fighter;
 
-public class CharacterPlayer {
+public class CharacterPlayer extends Fighter{
     private int x, y;
     private Floor floor;
 
@@ -21,7 +23,7 @@ public class CharacterPlayer {
         int newX = x + dx;
         int newY = y + dy;
 
-        if (floor.getTile(newX, newY).getType() == TileType.FLOOR) {
+        if (floor.getTile(newX, newY).isWalkable()) {
             x = newX;
             y = newY;
         }
@@ -29,4 +31,22 @@ public class CharacterPlayer {
 
     public int getX() { return x; }
     public int getY() { return y; }
+    
+    public void moveToStart() {
+    	if (floor instanceof DungeonFloor) {
+    		DungeonFloor dungeon = (DungeonFloor) floor;
+    		Tile start = dungeon.start;
+    		int[] startPos = start.getTilePosition();
+    		this.x = startPos[0];
+    		this.y = startPos[1];
+    	}
+    }
+    
+    @Override
+    public void attack(Fighter enemy) {
+    	super(enemy);
+    	if (enemy.getHp() > 0) {
+    		enemy.attack();
+    	}
+    }
 }
