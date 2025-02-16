@@ -1,11 +1,9 @@
 package edu.depaul.rogue.character;
-
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.Tile;
-import edu.depaul.rogue.combat.Fighter;
 
-public class CharacterPlayer extends Fighter{
+public class CharacterPlayer {
     private int x, y;
     private Floor floor;
 
@@ -39,14 +37,6 @@ public class CharacterPlayer extends Fighter{
     		int[] startPos = start.getTilePosition();
     		this.x = startPos[0];
     		this.y = startPos[1];
-    	}
-    }
-    
-    @Override
-    public void attack(Fighter enemy) {
-    	super(enemy);
-    	if (enemy.getHp() > 0) {
-    		enemy.attack();
     	}
     }
 }
