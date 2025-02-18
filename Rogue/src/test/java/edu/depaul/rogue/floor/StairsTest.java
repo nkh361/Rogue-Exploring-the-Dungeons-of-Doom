@@ -19,8 +19,8 @@ public class StairsTest {
         eventManager = new EventManager();
         testGame = new RogueGame(); // Create a test game instance
         testFloor = (DungeonFloor) FloorFactory.createFloor("dungeon", 10, 10, eventManager);
-        testPlayer = new CharacterPlayer(testFloor, 1, 1); // ✅ Fixed Constructor
-        testStairs = new Stairs(1, 1, eventManager); // ✅ Fixed Constructor
+        testPlayer = new CharacterPlayer(testFloor, 1, 1); 
+        testStairs = new Stairs(1, 1, eventManager);
     }
 
     @Test
@@ -32,8 +32,8 @@ public class StairsTest {
 
     @Test
     void testStairsTriggerGeneratesNewFloor() {
-        int oldFloorLevel = testGame.getFloorLevel(); // ✅ Fixed Method
-        testStairs.trigger(testFloor, testPlayer); // ✅ Fixed Method Call
+        int oldFloorLevel = testGame.getFloorLevel(); 
+        testStairs.trigger(testFloor, testPlayer); 
         int newFloorLevel = testGame.getFloorLevel();
 
         assertNotEquals(oldFloorLevel, newFloorLevel, "Floor level should increase after stepping on stairs.");
