@@ -8,8 +8,9 @@ public class Monster {
     private boolean isDead;
     private int currentDamage;
     private int[] lvlsFound;
+    private int x, y;
 
-    public Monster(MonsterType type) {
+    public Monster(MonsterType type, int x, int y) {
         this.type = type;
         int[] hpt = type.getHpt();
         int[] dmg = type.getDmg();
@@ -18,6 +19,8 @@ public class Monster {
         this.currentDamage = Dice.roll(dmg[0], dmg[1]);
         this.lvlsFound = type.getLvlsFound();
         this.isDead = false;
+        this.x = x;
+        this.y = y;
     }
 
     public void takeDamage(int damage) {
@@ -34,9 +37,9 @@ public class Monster {
 
     public String getMonsterInfo() {
         return String.format(
-                "%s (Level %d) - HP: %d, Armor: %d, Damage: %d, Flag: %d, Lvls: %d-%d",
+                "%s (Level %d) - HP: %d, Armor: %d, Damage: %d, Flag: %d, Lvls: %d-%d, Location: %d, %d",
                 type.getName(), type.getLvl(), currentHealth, type.getArmr(),
-                currentDamage, type.getFlag(), lvlsFound[0], lvlsFound[1]
+                currentDamage, type.getFlag(), lvlsFound[0], lvlsFound[1], x, y
         );
     }
 
@@ -51,4 +54,17 @@ public class Monster {
     public int[] getLvlsFound() {
         return lvlsFound;
     }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public char getType() {
+        return type.getChar();
+    }
+
 }

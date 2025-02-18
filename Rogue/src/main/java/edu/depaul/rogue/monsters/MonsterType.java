@@ -65,4 +65,8 @@ public enum MonsterType {
     public int[] getLvlsFound() {
         return lvlsFound;
     }
+
+    public char getChar() {
+        return name.charAt(0);
+    }
 }
