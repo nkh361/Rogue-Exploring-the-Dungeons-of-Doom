@@ -13,45 +13,50 @@ public abstract class Fighter {
 	public int getAmr() {	return this.amr;	}
 	public int getHp() {	return this.hp;		}
 	public int getStr() {	return this.str;	}
-	public int[] getAtk() {	return this.atk;	}
 	public int[] getDmg() {	return this.dmg;	}
 	
 	public void setLvl(int lvl) {	this.lvl = lvl;		}
 	public void setAmr(int amr) {	this.amr = amr;		}
 	public void setHp(int hp) {		this.hp = hp;		}
 	public void setStr(int str) {	this.str = str;		}
-	public void setAtk(int nDice, int nSides) {
-		atk = new int[2];
-		atk[0] = nDice;
-		atk[1] = nSides;
-	}
+
 	public void setDmg(int nDice, int nSides) {
 		dmg = new int[2];
 		dmg[0] = nDice;
 		dmg[1] = nSides;
 	}
 	
-	public void setFighter(int lvl, int amr, int hp, int str, int atk1, int atk2, int dmg1, int dmg2) {
+	public void setFighter(int lvl, int amr, int hp, int str, int dmg1, int dmg2) {
 		setLvl(lvl);
 		setAmr(amr);
 		setHp(hp);
 		setStr(str);
-		setAtk(atk1, atk2);
 		setDmg(dmg1, dmg2);
 	}
 	
+	/**
+	 * Represents one attack by fighter against enemy
+	 * TODO: Set enemy based on player's and monsters' positions
+	 */
 	public void attack(Fighter enemy) {
-		int atkRoll = Dice.roll(atk[0], atk[1]) + this.atkBonus();
+		int atkRoll = Dice.roll(1,20) + this.atkBonus();
 		int atkSuccess = 20 - lvl - enemy.getAmr();
+		
+		// Attack only hits if atkRoll is greater than atkSuccess
 		if (atkRoll > atkSuccess) {
+			// Base damage is randomized
 			int dmgTotal = Dice.roll(dmg[0], dmg[1]) + this.dmgBonus();
+			// Update enemy's health after it takes damage
 			enemy.setHp(enemy.getHp() - dmgTotal);
-			if (enemy.getHp() < 1) {	enemy.dead();	}
+			if (enemy.getHp() < 1) {	enemy.isDead();	}
 		}
 	}
 	
-	public abstract void dead();
+	public abstract boolean isDead();
 	
+	/**	
+	 * Calculates attack bonus based on fighter's strength
+	 */
 	protected int atkBonus() {
 		int atkB;
 		if (str < 8) {	atkB = -3;	}
@@ -63,6 +68,9 @@ public abstract class Fighter {
 		return atkB;
 	}
 	
+	/**	
+	 * Calculates damage bonus based on fighter's strength
+	 */
 	protected int dmgBonus() {
 		int dmgB;
 		if (str < 8) {	dmgB = -1;	}

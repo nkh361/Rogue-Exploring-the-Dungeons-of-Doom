@@ -1,9 +1,17 @@
 package edu.depaul.rogue.floor;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
+import edu.depaul.rogue.EventManager;
 
 import static org.junit.jupiter.api.Assertions.*;
 class FloorTest {
+	private static EventManager eventManager;
+	
+	@BeforeAll
+	static void setup() {
+		eventManager = new EventManager();
+	}
 
     @Test
     public void testTileCreation() {
@@ -24,7 +32,7 @@ class FloorTest {
 
     @Test
     public void testDungeonFloorInitialization() {
-        DungeonFloor dungeon = new DungeonFloor(10, 10);
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
 
         dungeon.printFloor();
 
@@ -44,7 +52,7 @@ class FloorTest {
 
     @Test
     public void testDungeonFloorStartAndFinish() {
-        DungeonFloor dungeon = new DungeonFloor(10, 10);
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
 
         // find the start and finish
         int[] start = dungeon.findTilePosition(TileType.START);
@@ -65,7 +73,7 @@ class FloorTest {
 
     @Test
     public void testFloorBounds() {
-        DungeonFloor dungeon = new DungeonFloor(10, 10);
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
 
         Tile outOfBounds = dungeon.getTile(-1, -1);
         assertEquals(TileType.WALL, outOfBounds.getType());
@@ -76,8 +84,10 @@ class FloorTest {
 
     @Test
     public void testPathPossible() {
-        DungeonFloor dungeon = new DungeonFloor(10, 10);
+
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
         dungeon.generatePassableFloor();
+
         // check if the floor is passable
         assertTrue(dungeon.isPathPossible(), "path should be possible between start and finish");
     }
