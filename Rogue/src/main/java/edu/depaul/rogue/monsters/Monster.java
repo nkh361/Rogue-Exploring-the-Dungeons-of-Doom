@@ -43,4 +43,12 @@ public class Monster {
     public int getCurrentHealth() {
         return currentHealth;
     }
+
+    public int getCurrentDamage() {
+        return currentDamage;
+    }
+
+    public int[] getLvlsFound() {
+        return lvlsFound;
+    }
 }
