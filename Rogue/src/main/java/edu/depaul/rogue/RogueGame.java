@@ -77,7 +77,6 @@ public class RogueGame extends Application {
             return;
         }
 
-
         // find the starting tile
         int startX = -1, startY = -1;
         for (int y = 0; y < floor.getHeight(); y++) {
@@ -118,12 +117,23 @@ public class RogueGame extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+    private int floorLevel = 1; // Track current floor level
+
+    public int getFloorLevel() {
+      return floorLevel;
+    }
+
+    /**
+     * Clears the existing floor from the GridPane before rendering the new one.
+     */
+    private void clearFloorRender() {
+        gridPane.getChildren().clear(); // Removes all current tiles from GridPane
+    }
 
     /**
      * Renders the given floor onto the provided GridPane by creating a visual representation
      * of the floor layout using JavaFX Label components. Each tile on the floor is mapped
      * to the gridPane.
-     *
      *
      * @param floor             The floor object containing the layout to be rendered.
      * @param gridPane          The JavaFX GridPane where the floor layout will be displayed.
@@ -181,13 +191,14 @@ public class RogueGame extends Application {
             case D -> player.move(1, 0);
         }
 
+        clearFloorRender();  // Clear old floor before rendering new one
         renderFloor(floor, gridPane);
-
         renderPlayer();
         
         if (eventManager.triggerEvent(floor)) {
-        	renderFloor(floor, gridPane);
-        	renderPlayer();
+            clearFloorRender();  // Ensures cleared floor before rendering a new one
+            renderFloor(floor, gridPane);
+            renderPlayer();
         }
     }
 
