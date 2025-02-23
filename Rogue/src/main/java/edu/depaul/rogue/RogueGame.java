@@ -29,6 +29,7 @@ public class RogueGame extends Application {
     private GridPane gridPane;
     private Floor floor;
     private Label playerLabel;
+    private EventManager eventManager;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -68,8 +69,10 @@ public class RogueGame extends Application {
         gridPane.setHgap(2);
         gridPane.setVgap(2);
 
+        eventManager = new EventManager();
+        
         // create a floor and generate it
-        floor = FloorFactory.createFloor("dungeon", 10, 10);
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
         if (floor == null) {
             System.out.println("Failed to create floor.");
             return;
@@ -96,6 +99,8 @@ public class RogueGame extends Application {
 
         // initialize the player
         player = CharacterFactory.createPlayer(floor, startX, startY);
+        
+        eventManager.setPlayer(player);
 
         // render the floor in the GridPane
         renderFloor(floor, gridPane);
@@ -117,12 +122,23 @@ public class RogueGame extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+    private int floorLevel = 1; // Track current floor level
+
+    public int getFloorLevel() {
+      return floorLevel;
+    }
+
+    /**
+     * Clears the existing floor from the GridPane before rendering the new one.
+     */
+    private void clearFloorRender() {
+        gridPane.getChildren().clear(); // Removes all current tiles from GridPane
+    }
 
     /**
      * Renders the given floor onto the provided GridPane by creating a visual representation
      * of the floor layout using JavaFX Label components. Each tile on the floor is mapped
      * to the gridPane.
-     *
      *
      * @param floor             The floor object containing the layout to be rendered.
      * @param gridPane          The JavaFX GridPane where the floor layout will be displayed.
@@ -192,6 +208,7 @@ public class RogueGame extends Application {
 
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
+     * After player moves, check for event tile.
      *
      * @param event         Event handler for keyboard.
      */
@@ -204,8 +221,13 @@ public class RogueGame extends Application {
         }
 
         renderFloor(floor, gridPane);
-
         renderPlayer();
+        
+        if (eventManager.triggerEvent(floor)) {
+            clearFloorRender();  // Ensures cleared floor before rendering a new one
+            renderFloor(floor, gridPane);
+            renderPlayer();
+        }
     }
 
     public static void main(String[] args) {

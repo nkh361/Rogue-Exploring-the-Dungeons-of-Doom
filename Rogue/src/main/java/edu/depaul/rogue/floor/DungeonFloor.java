@@ -3,11 +3,16 @@ package edu.depaul.rogue.floor;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import edu.depaul.rogue.EventManager;
 
 public class DungeonFloor extends Floor {
+	public Tile start;
+	public Stairs finish;
+	private EventManager eventManager;
 
-    public DungeonFloor(int width, int height) {
+    public DungeonFloor(int width, int height, EventManager eventManager) {
         super(width, height);
+        this.eventManager = eventManager;
         generatePassableFloor();
     }
 
@@ -68,7 +73,11 @@ public class DungeonFloor extends Floor {
 
         // set the start/finish tiles
         grid[startY][startX] = new Tile(TileType.START);
-        grid[finishY][finishX] = new Tile(TileType.FINISH);
+        this.start = grid[startY][startX];
+        this.start.setTilePosition(startX, startY);
+        grid[finishY][finishX] = new Stairs(finishX, finishY, eventManager);
+        this.finish = (Stairs) grid[finishY][finishX];
+        
 
     }
 
