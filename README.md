@@ -10,6 +10,12 @@ Our project is to build a version of Rogue Exploring the Dungeons of Doom with o
 
 ---
 
+## Sprint 2 Demo
+
+![Demo](media/sprint-2.gif)
+
+---
+
 ## **2. Release Plan**
 
 ### **Sprint 2: The Dungeon and Player**

@@ -5,6 +5,8 @@ import edu.depaul.rogue.character.CharacterFactory;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.monsters.Monster;
+import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
 import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.application.Application;
@@ -27,7 +29,6 @@ public class RogueGame extends Application {
     private GridPane gridPane;
     private Floor floor;
     private Label playerLabel;
-    private EventManager eventManager;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -66,12 +67,9 @@ public class RogueGame extends Application {
         gridPane = new GridPane();
         gridPane.setHgap(2);
         gridPane.setVgap(2);
-        
-        // create EventManager instance
-        eventManager = new EventManager();
 
         // create a floor and generate it
-        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+        floor = FloorFactory.createFloor("dungeon", 10, 10);
         if (floor == null) {
             System.out.println("Failed to create floor.");
             return;
@@ -96,6 +94,7 @@ public class RogueGame extends Application {
             return;
         }
 
+        // initialize the player
         player = CharacterFactory.createPlayer(floor, startX, startY);
         
         eventManager.setPlayer(player);
@@ -105,6 +104,9 @@ public class RogueGame extends Application {
 
         // render the player
         renderPlayer();
+
+        // generate monsters
+        generateMonsters();
 
         // event handler for key presses
         Scene scene = new Scene(root, 400, 400);
@@ -158,6 +160,31 @@ public class RogueGame extends Application {
         }
     }
 
+    private void generateMonsters() {
+        for (int i = 0; i < 3; i++) {
+            int x = (int) (Math.random() * floor.getWidth());
+            int y = (int) (Math.random() * floor.getHeight());
+
+            if (floor.getTile(x, y).isWalkable()) {
+                // FIXME: adjust to be dynamic based on floors
+                Monster monster = MonsterFactory.createMonster('A', x, y);
+                renderMonster(monster);
+            }
+        }
+    }
+
+    private void renderMonster(Monster monster) {
+        Label monsterLabel = new Label(String.valueOf(monster.getType()));
+
+        monsterLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
+        monsterLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        monsterLabel.setAlignment(Pos.CENTER);
+        gridPane.add(monsterLabel, monster.getX(), monster.getY());
+
+        GridPane.setHgrow(monsterLabel, Priority.ALWAYS);
+        GridPane.setVgrow(monsterLabel, Priority.ALWAYS);
+    }
+
     /**
      * Renders a player onto the GridPane.
      */
@@ -179,7 +206,6 @@ public class RogueGame extends Application {
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
      * After player moves, check for event tile.
-     * FIXME: Need a method to clear floor before rendering new level floor.
      *
      * @param event         Event handler for keyboard.
      */
@@ -191,7 +217,6 @@ public class RogueGame extends Application {
             case D -> player.move(1, 0);
         }
 
-        clearFloorRender();  // Clear old floor before rendering new one
         renderFloor(floor, gridPane);
         renderPlayer();
         
