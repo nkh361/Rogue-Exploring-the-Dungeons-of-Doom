@@ -5,7 +5,8 @@ import edu.depaul.rogue.dice.Dice;
 public abstract class Fighter {
 
 	protected int lvl, amr, hp, str;
-	protected int[] atk, dmg;
+	protected int[] dmg;
+	protected boolean isDead;
 	
 	// getters and setters
 	
@@ -32,6 +33,7 @@ public abstract class Fighter {
 		setHp(hp);
 		setStr(str);
 		setDmg(dmg1, dmg2);
+		this.isDead = false;
 	}
 	
 	/**
@@ -48,12 +50,20 @@ public abstract class Fighter {
 			int dmgTotal = Dice.roll(dmg[0], dmg[1]) + this.dmgBonus();
 			// Update enemy's health after it takes damage
 			enemy.setHp(enemy.getHp() - dmgTotal);
-			if (enemy.getHp() < 1) {	enemy.isDead();	}
+			enemy.isDead();	
 		}
 	}
 	
-	public abstract boolean isDead();
-	
+	public boolean isDead() {
+		if (this.hp < 1) {
+			this.setHp(0);
+			this.isDead = true;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	/**	
 	 * Calculates attack bonus based on fighter's strength
 	 */

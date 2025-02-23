@@ -1,10 +1,16 @@
 package edu.depaul.rogue;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 import edu.depaul.rogue.character.CharacterController;
 import edu.depaul.rogue.character.CharacterFactory;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.monsters.Monster;
+import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
 import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.application.Application;
@@ -28,6 +34,7 @@ public class RogueGame extends Application {
     private Floor floor;
     private Label playerLabel;
     private EventManager eventManager;
+    private HashMap<List<Integer>, Monster> presentMonsters = new HashMap<List<Integer>, Monster>();
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -147,6 +154,35 @@ public class RogueGame extends Application {
             }
         }
     }
+    
+    private void generateMonsters() {
+        for (int i = 0; i < 3; i++) {
+            int x = (int) (Math.random() * floor.getWidth());
+            int y = (int) (Math.random() * floor.getHeight());
+
+            if (floor.getTile(x, y).isWalkable()) {
+                // FIXME: adjust to be dynamic based on floors
+                Monster monster = MonsterFactory.createMonster('A', x, y);
+                
+                Integer[] monsterPosition = {x, y};
+                presentMonsters.put(Arrays.asList(monsterPosition), monster);
+                
+                renderMonster(monster);
+            }
+        }
+    }
+    
+    private void renderMonster(Monster monster) {
+        Label monsterLabel = new Label(String.valueOf(monster.getType()));
+
+        monsterLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
+        monsterLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        monsterLabel.setAlignment(Pos.CENTER);
+        gridPane.add(monsterLabel, monster.getX(), monster.getY());
+
+        GridPane.setHgrow(monsterLabel, Priority.ALWAYS);
+        GridPane.setVgrow(monsterLabel, Priority.ALWAYS);
+    }
 
     /**
      * Renders a player onto the GridPane.
@@ -179,6 +215,11 @@ public class RogueGame extends Application {
             case S -> player.move(0, 1);
             case A -> player.move(-1, 0);
             case D -> player.move(1, 0);
+            case VK_SPACE:
+            	player.attackMonster(presentMonsters);
+            	for (Monster monster:presentMonsters.values()) {
+            		renderMonster(monster);
+            	}
         }
 
         renderFloor(floor, gridPane);
