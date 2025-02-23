@@ -2,8 +2,9 @@ package edu.depaul.rogue.character;
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.combat.Fighter;
 
-public class CharacterPlayer {
+public class CharacterPlayer extends Fighter{
     private int x, y;
     private Floor floor;
 
