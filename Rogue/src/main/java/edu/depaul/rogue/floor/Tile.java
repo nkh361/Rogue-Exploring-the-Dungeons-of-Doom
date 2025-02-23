@@ -7,6 +7,11 @@ public class Tile {
     public Tile(TileType type) {
         this.type = type;
     }
+    
+    public Tile(int x, int y) {
+    	this.x = x;
+    	this.y = y;
+    }
 
     public TileType getType() {
         return type;

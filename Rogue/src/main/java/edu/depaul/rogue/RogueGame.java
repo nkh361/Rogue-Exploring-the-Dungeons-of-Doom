@@ -29,6 +29,7 @@ public class RogueGame extends Application {
     private GridPane gridPane;
     private Floor floor;
     private Label playerLabel;
+    private EventManager eventManager;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -68,8 +69,10 @@ public class RogueGame extends Application {
         gridPane.setHgap(2);
         gridPane.setVgap(2);
 
+        eventManager = new EventManager();
+        
         // create a floor and generate it
-        floor = FloorFactory.createFloor("dungeon", 10, 10);
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
         if (floor == null) {
             System.out.println("Failed to create floor.");
             return;
