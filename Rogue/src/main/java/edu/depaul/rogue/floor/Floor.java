@@ -3,7 +3,6 @@ package edu.depaul.rogue.floor;
 public abstract class Floor {
     protected int width, height;
     protected Tile[][] grid;
-    protected Tile start, finish;
 
     public Floor(int width, int height) {
         this.width = width;
