@@ -2,15 +2,20 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Set up job
+        run: echo "Starting CI Pipeline"
+
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -24,20 +29,27 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
 
       - name: Build with Maven
-        run: |
-          cd Rogue
-          mvn clean install
+        run: mvn clean install
 
       - name: Run Unit Tests
-        run: |
-          cd Rogue
-          mvn test
+        run: mvn test
+
+      - name: Install xvfb (Virtual Display for JavaFX)
+        run: sudo apt-get install -y xvfb
 
       - name: Run the Game (Headless Mode for CI)
-        run: |
-          cd Rogue
-          mvn exec:java -Dexec.mainClass="edu.depaul.rogue.RogueGame"
+        run: xvfb-run --auto-servernum java -jar target/roguegame.jar
+
+      - name: Post Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: maven-
+
+      - name: Complete job
+        run: echo "CI Pipeline finished!"
