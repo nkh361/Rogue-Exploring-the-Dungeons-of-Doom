@@ -12,11 +12,13 @@ import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
@@ -46,6 +48,7 @@ public class RogueGame extends Application {
     public void start(Stage primaryStage) {
         // character stats
         StatsManager statsManager = new StatsManager(100);
+        checkGameOver(statsManager, primaryStage);
         healthBar = new ProgressBar();
         healthBar.progressProperty().bind(statsManager.getHealthStat().currentHealthProperty().divide(100));
         healthBar.setPrefWidth(100);
@@ -232,6 +235,42 @@ public class RogueGame extends Application {
             renderFloor(floor, gridPane);
             renderPlayer();
         }
+    }
+
+    private void checkGameOver(StatsManager statsManager, Stage primaryStage) {
+        statsManager.getHealthStat().currentHealthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() <= 0) {
+                showGameOverScreen(primaryStage);
+            }
+        });
+    }
+
+    private void showGameOverScreen(Stage primaryStage) {
+        BorderPane gameOverPane = new BorderPane();
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.setFont(Font.font("Monospaced", 30));
+        gameOverLabel.setAlignment(Pos.CENTER);
+
+        Button restartButton = new Button("Restart");
+        restartButton.setOnAction(event -> restartGame(primaryStage));
+
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(event -> System.exit(0));
+
+        VBox buttonBox = new VBox(10, restartButton, exitButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(20, gameOverPane, buttonBox);
+        layout.setAlignment(Pos.CENTER);
+        gameOverPane.setCenter(layout);
+
+        Scene gameOverScene = new Scene(gameOverPane, 400, 400);
+        primaryStage.setScene(gameOverScene);
+    }
+
+    private void restartGame(Stage primaryStage) {
+        primaryStage.close();
+        start(new Stage());
     }
 
     public static void main(String[] args) {

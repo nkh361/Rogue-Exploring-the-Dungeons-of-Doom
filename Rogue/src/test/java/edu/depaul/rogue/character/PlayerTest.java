@@ -1,7 +1,6 @@
 package edu.depaul.rogue.character;
 
 import edu.depaul.rogue.EventManager;
-import edu.depaul.rogue.RogueGame;
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
@@ -13,12 +12,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PlayerTest {
     private Floor floor;
     private CharacterPlayer player;
+    private EventManager eventManager = new EventManager();
 
     @BeforeEach
     void setup() {
-        EventManager eventManager = new EventManager();
-        RogueGame testGame = new RogueGame();
-        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager,testGame);
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+
         player = new CharacterPlayer(floor, 2, 2);
     }
 

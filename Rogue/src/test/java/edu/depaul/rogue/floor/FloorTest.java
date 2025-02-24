@@ -1,5 +1,6 @@
 package edu.depaul.rogue.floor;
 
+import edu.depaul.rogue.EventManager;
 import org.junit.jupiter.api.Test;
 import edu.depaul.rogue.EventManager;
 import edu.depaul.rogue.RogueGame;
@@ -7,7 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FloorTest {
-    private RogueGame rogueGameInstance;
+    private EventManager eventManager = new EventManager();
+
 
     @BeforeEach
     void setup(){
@@ -32,8 +34,8 @@ class FloorTest {
 
     @Test
     public void testDungeonFloorInitialization() {
-        EventManager eventManager = new EventManager();
-        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager,rogueGameInstance);
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
+
 
         dungeon.printFloor();
 
@@ -61,29 +63,27 @@ class FloorTest {
 
     @Test
     public void testDungeonFloorStartAndFinish() {
-        EventManager eventManager = new EventManager();
-        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager,rogueGameInstance);
-
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
         
         int[] start = findTile(dungeon, TileType.START);
         int[] finish = findTile(dungeon, TileType.FINISH);
 
+        // make sure the floor has start and finish marks
         assertNotNull(start, "Start tile should be placed on the floor");
         assertNotNull(finish, "Finish tile should be placed on the floor");
 
-        // Check if both the start and finish tiles are walkable
+        // check if both the start and finish tiles are walkable
         assertTrue(dungeon.getTile(start[0], start[1]).isWalkable(), "Start tile should be walkable");
         assertTrue(dungeon.getTile(finish[0], finish[1]).isWalkable(), "Finish tile should be walkable");
 
-        // Make sure start and finish are not the same {x, y}
+        // make sure start and finish are not the same {x, y}
         assertNotEquals(start[0], finish[0], "Start and finish should not share the same X coordinate");
         assertNotEquals(start[1], finish[1], "Start and finish should not share the same Y coordinate");
     }
 
     @Test
     public void testFloorBounds() {
-        EventManager eventManager = new EventManager();
-        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager, rogueGameInstance);
+        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
 
         Tile outOfBounds = dungeon.getTile(-1, -1);
         assertEquals(TileType.WALL, outOfBounds.getType());
@@ -94,8 +94,7 @@ class FloorTest {
 
     @Test
     public void testPathPossible() {
-        EventManager eventManager = new EventManager();
-        DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager, rogueGameInstance);
+        DungeonFloor dungeon = new DungeonFloor( 10, 10, eventManager);
         dungeon.generatePassableFloor();
         // Check if the floor is passable
         assertTrue(dungeon.isPathPossible(), "Path should be possible between start and finish");
