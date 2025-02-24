@@ -1,38 +1,25 @@
 package edu.depaul.rogue.stats;
 
-import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
+import javafx.scene.layout.VBox;
 
-public class StatsDisplay extends Application {
-    private ProgressBar healthBar;
+public class StatsDisplay extends VBox {
     private Label healthLabel;
+    private Label xpLabel;
+    private Label levelLabel;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        StatsManager statsManager = new StatsManager(100);  //  max health
-
-        healthBar = new ProgressBar();
-        healthBar.progressProperty().bind(statsManager.getHealthStat().currentHealthProperty().divide(100.0));
-        healthBar.setPrefWidth(200);
+    public StatsDisplay() {
+        StatsManager statsManager = StatsManager.getInstance();
 
         healthLabel = new Label();
-        healthLabel.textProperty().bind(statsManager.getHealthStat().currentHealthProperty().asString("HP: %d/100"));
+        healthLabel.textProperty().bind(statsManager.getHealthStat().currentHealthProperty().asString());
 
-        BorderPane root = new BorderPane();
-        root.setBottom(healthLabel);
-        BorderPane.setAlignment(healthLabel, javafx.geometry.Pos.BOTTOM_LEFT);
+        xpLabel = new Label();
+        xpLabel.textProperty().bind(statsManager.getExperienceManager().currentXPProperty().asString());
 
-        Scene scene = new Scene(root, 300, 150);
-        primaryStage.setTitle("Character Stats");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+        levelLabel = new Label();
+        levelLabel.textProperty().bind(statsManager.getExperienceManager().levelProperty().asString());
 
-    public static void main(String[] args) {
-        launch(args);
+        this.getChildren().addAll(healthLabel, xpLabel, levelLabel);
     }
 }

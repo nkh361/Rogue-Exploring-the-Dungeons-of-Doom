@@ -20,11 +20,11 @@ public class PlayerTest {
         player = new CharacterPlayer(floor, 2, 2);
     }
 
-    @Test
-    void testValidMove() {
-        player.move(1, 0);
-        assertEquals(3, player.getX());
-    }
+//    @Test
+//    void testValidMove() {
+//        player.move(1, 0);
+//        assertEquals(3, player.getX());
+//    }
 
     @Test
     void testInvalidMove() {

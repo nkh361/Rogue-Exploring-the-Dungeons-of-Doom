@@ -5,26 +5,31 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 public class HealthStat {
     private IntegerProperty currentHealth;
-    private int maxHealth;
+    private IntegerProperty maxHealth;
 
-    public HealthStat(int maxHealth) {
-        this.maxHealth = maxHealth;
-        this.currentHealth = new SimpleIntegerProperty(maxHealth);
+    public HealthStat(int initialHealth) {
+        this.maxHealth = new SimpleIntegerProperty(initialHealth);
+        this.currentHealth = new SimpleIntegerProperty(initialHealth);
     }
 
     public void takeDamage(int damage) {
-        currentHealth.set(Math.max(0, currentHealth.get() - damage));
+        currentHealth.set(Math.max(currentHealth.get() - damage, 0));
     }
 
     public void heal(int amount) {
-        currentHealth.set(Math.min(maxHealth, currentHealth.get() + amount));
+        currentHealth.set(Math.min(currentHealth.get() + amount, maxHealth.get()));
+    }
+
+    public void increaseMaxHealth(int amount) {
+        maxHealth.set(maxHealth.get() + amount);
+        heal(amount);  // Optionally heal the player upon increasing max health
     }
 
     public IntegerProperty currentHealthProperty() {
         return currentHealth;
     }
 
-    public int getMaxHealth() {
+    public IntegerProperty maxHealthProperty() {
         return maxHealth;
     }
 }
