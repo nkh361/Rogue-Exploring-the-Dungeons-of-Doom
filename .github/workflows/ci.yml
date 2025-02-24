@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - stairs  # Adjust if you want CI on a different branch
+  
   pull_request:
     branches:
       - main
