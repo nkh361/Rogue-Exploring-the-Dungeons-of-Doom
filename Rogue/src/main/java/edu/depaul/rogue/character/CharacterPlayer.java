@@ -52,6 +52,9 @@ public class CharacterPlayer extends Fighter{
     	}
     }
     
+	/**    
+	 * Returns array of positions surrounding player
+	 */
     public Integer[][] getSurrounding() {
     	Integer[][] surrounding = new Integer[8][2];
     	int i = 0;
@@ -69,6 +72,10 @@ public class CharacterPlayer extends Fighter{
     	return surrounding;
     }
     
+    
+	/**
+	 * Overrides Fighter attack method so that enemy attacks after player attacks
+	 */
     @Override
     public void attack(Fighter enemy) {
     	super.attack(enemy);
@@ -77,6 +84,15 @@ public class CharacterPlayer extends Fighter{
     	}
     }
     
+	/**
+	 * Attack nearby monster. If monster is mean, it will attack player first,
+	 * otherwise player attacks. If monster is dead, it is removed from HashMap of 
+	 * monsters present on the level and is returned as an Optional. If the monster
+	 * is not dead, Optional returns empty.
+	 * 
+	 * FIXME: Mean monster will attack before player with every KeyEvent (2 monster attacks 
+	 * for each player turn) and waits for nearby player to try to attack first.
+	 */
     public Optional<Monster> attackMonster(HashMap<List<Integer>, Monster> monsters) {
     	for (Integer[] position:this.getSurrounding()) {
     		if(monsters.containsKey(Arrays.asList(position))) {

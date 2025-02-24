@@ -38,7 +38,6 @@ public abstract class Fighter {
 	
 	/**
 	 * Represents one attack by fighter against enemy
-	 * TODO: Set enemy based on player's and monsters' positions
 	 */
 	public void attack(Fighter enemy) {
 		int atkRoll = Dice.roll(1,20) + this.atkBonus();
