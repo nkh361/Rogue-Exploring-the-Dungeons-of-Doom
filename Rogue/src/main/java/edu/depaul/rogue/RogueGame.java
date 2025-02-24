@@ -15,6 +15,8 @@ import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
 import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.application.Application;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -29,6 +31,9 @@ import javafx.scene.input.KeyEvent;
 public class RogueGame extends Application {
     private ProgressBar healthBar;
     private Label healthLabel;
+    private ProgressBar xpBar;
+    private Label xpLabel;
+    private Label levelLabel;
     private CharacterPlayer player;
     private CharacterController characterController;
     private GridPane gridPane;
@@ -51,30 +56,78 @@ public class RogueGame extends Application {
     @Override
     public void start(Stage primaryStage) {
         // character stats
-        StatsManager statsManager = new StatsManager(100);
+
+        StatsManager statsManager = StatsManager.getInstance();
+
+        // Initialize the GridPane first
+        gridPane = new GridPane();
+        gridPane.setHgap(2);
+        gridPane.setVgap(2);
+
+        // Health bar setup with DoubleBinding
         healthBar = new ProgressBar();
-        healthBar.progressProperty().bind(statsManager.getHealthStat().currentHealthProperty().divide(100));
-        healthBar.setPrefWidth(100);
+        healthBar.progressProperty().bind(new DoubleBinding() {
+            {
+                super.bind(statsManager.getHealthStat().currentHealthProperty(),
+                        statsManager.getHealthStat().maxHealthProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                return statsManager.getHealthStat().currentHealthProperty().get() /
+                        (double) statsManager.getHealthStat().maxHealthProperty().get();
+            }
+        });
+        healthBar.setPrefWidth(200);
 
         healthLabel = new Label();
-        healthLabel.textProperty().bind(statsManager.getHealthStat().currentHealthProperty().asString("HP: %d/100"));
+        healthLabel.textProperty().bind(Bindings.format("HP: %d/%d",
+                statsManager.getHealthStat().currentHealthProperty(),
+                statsManager.getHealthStat().maxHealthProperty()));
+
+        // XP bar setup with DoubleBinding
+        xpBar = new ProgressBar();
+        xpBar.progressProperty().bind(new DoubleBinding() {
+            {
+                super.bind(statsManager.getExperienceManager().currentXPProperty(),
+                        statsManager.getExperienceManager().xpToNextLevelProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                return statsManager.getExperienceManager().currentXPProperty().get() /
+                        (double) statsManager.getExperienceManager().xpToNextLevelProperty().get();
+            }
+        });
+        xpBar.setPrefWidth(200);
+
+        xpLabel = new Label();
+        xpLabel.textProperty().bind(Bindings.format("XP: %d/%d",
+                statsManager.getExperienceManager().currentXPProperty(),
+                statsManager.getExperienceManager().xpToNextLevelProperty()));
+
+        levelLabel = new Label();
+        levelLabel.textProperty().bind(Bindings.format("Level: %d",
+                statsManager.getExperienceManager().levelProperty()));
+
+
+        GridPane statsPane = new GridPane();
+        statsPane.setHgap(10);
+        statsPane.add(healthLabel, 0, 0);
+        statsPane.add(healthBar, 1, 0);
+        statsPane.add(levelLabel, 0, 1);
+        statsPane.add(xpLabel, 1, 1);
+        statsPane.add(xpBar, 1, 2);
 
         BorderPane root = new BorderPane();
-
-        GridPane healthPane = new GridPane();
-        healthPane.setHgap(10);
-        healthPane.add(healthLabel, 0, 0);
-        healthPane.add(healthBar, 1, 0);
-
-        // align healthPane to bottom left
-        root.setBottom(healthPane);
-        BorderPane.setAlignment(healthPane, Pos.BOTTOM_LEFT);
+        root.setBottom(statsPane);
+        BorderPane.setAlignment(statsPane, Pos.BOTTOM_LEFT);
 
         // make the GridPane to hold the tiles
         gridPane = new GridPane();
         gridPane.setHgap(2);
         gridPane.setVgap(2);
-        
+
         // create EventManager instance
         eventManager = new EventManager();
 
@@ -106,7 +159,7 @@ public class RogueGame extends Application {
         }
 
         player = CharacterFactory.createPlayer(floor, startX, startY);
-        
+
         eventManager.setPlayer(player);
 
         // render the floor in the GridPane
@@ -114,7 +167,7 @@ public class RogueGame extends Application {
 
         // render the player
         renderPlayer();
-        
+
         // generate monsters
         generateMonsters();
 
@@ -129,7 +182,7 @@ public class RogueGame extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
     /**
      * Clears the existing floor from the GridPane before rendering the new one.
      */
@@ -165,7 +218,7 @@ public class RogueGame extends Application {
             }
         }
     }
-    
+
     private void generateMonsters() {
         for (int i = 0; i < 3; i++) {
             int x = (int) (Math.random() * floor.getWidth());
@@ -174,15 +227,15 @@ public class RogueGame extends Application {
             if (floor.getTile(x, y).isWalkable()) {
                 // FIXME: adjust to be dynamic based on floors
                 Monster monster = MonsterFactory.createMonster('A', x, y);
-                
+
                 Integer[] monsterPosition = {x, y};
                 presentMonsters.put(Arrays.asList(monsterPosition), monster);
-                
+
                 renderMonster(monster);
             }
         }
     }
-    
+
     private void renderMonster(Monster monster) {
         Label monsterLabel = new Label(String.valueOf(monster.getType()));
 
@@ -241,7 +294,7 @@ public class RogueGame extends Application {
         renderFloor(floor, gridPane);
 
         renderPlayer();
-        
+
         if (eventManager.triggerEvent(floor)) {
         	presentMonsters.clear();
         	clearFloorRender();
