@@ -1,10 +1,5 @@
 package edu.depaul.rogue;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-
 import edu.depaul.rogue.character.CharacterController;
 import edu.depaul.rogue.character.CharacterFactory;
 import edu.depaul.rogue.floor.Floor;
@@ -37,8 +32,6 @@ public class RogueGame extends Application {
     private Floor floor;
     private Label playerLabel;
     private EventManager eventManager;
-    private HashMap<List<Integer>, Monster> presentMonsters = new HashMap<List<Integer>, Monster>();
-
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -78,9 +71,6 @@ public class RogueGame extends Application {
         gridPane = new GridPane();
         gridPane.setHgap(2);
         gridPane.setVgap(2);
-        
-        // create EventManager instance
-        eventManager = new EventManager();
 
         eventManager = new EventManager();
         
@@ -90,7 +80,6 @@ public class RogueGame extends Application {
             System.out.println("Failed to create floor.");
             return;
         }
-
 
         // find the starting tile
         int startX = -1, startY = -1;
@@ -111,6 +100,7 @@ public class RogueGame extends Application {
             return;
         }
 
+        // initialize the player
         player = CharacterFactory.createPlayer(floor, startX, startY);
         
         eventManager.setPlayer(player);
@@ -120,9 +110,6 @@ public class RogueGame extends Application {
 
         // render the player
         renderPlayer();
-        
-        // generate monsters
-        generateMonsters();
 
         // generate monsters
         generateMonsters();
@@ -138,7 +125,6 @@ public class RogueGame extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
     private int floorLevel = 1; // Track current floor level
 
     public int getFloorLevel() {
@@ -178,35 +164,6 @@ public class RogueGame extends Application {
                 GridPane.setVgrow(label, Priority.ALWAYS);
             }
         }
-    }
-    
-    private void generateMonsters() {
-        for (int i = 0; i < 3; i++) {
-            int x = (int) (Math.random() * floor.getWidth());
-            int y = (int) (Math.random() * floor.getHeight());
-
-            if (floor.getTile(x, y).isWalkable()) {
-                // FIXME: adjust to be dynamic based on floors
-                Monster monster = MonsterFactory.createMonster('A', x, y);
-                
-                Integer[] monsterPosition = {x, y};
-                presentMonsters.put(Arrays.asList(monsterPosition), monster);
-                
-                renderMonster(monster);
-            }
-        }
-    }
-    
-    private void renderMonster(Monster monster) {
-        Label monsterLabel = new Label(String.valueOf(monster.getType()));
-
-        monsterLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
-        monsterLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        monsterLabel.setAlignment(Pos.CENTER);
-        gridPane.add(monsterLabel, monster.getX(), monster.getY());
-
-        GridPane.setHgrow(monsterLabel, Priority.ALWAYS);
-        GridPane.setVgrow(monsterLabel, Priority.ALWAYS);
     }
 
     private void generateMonsters() {
@@ -260,33 +217,19 @@ public class RogueGame extends Application {
      */
     private void handleKeyPressed(KeyEvent event) {
         switch (event.getCode()) {
-	        case W -> player.move(0, -1);
-	        case S -> player.move(0, 1);
-	        case A -> player.move(-1, 0);
-	        case D -> player.move(1, 0);
-            case SPACE -> {
-            	Optional<Monster> deadMonster = player.attackMonster(presentMonsters);
-            	if (deadMonster.isPresent()) {
-            		clearFloorRender();
-            		renderFloor(floor,gridPane);
-            		renderPlayer();
-	            	for (Monster monster:presentMonsters.values()) {
-	            		renderMonster(monster);
-	            	}
-            	}
-            }
+            case W -> player.move(0, -1);
+            case S -> player.move(0, 1);
+            case A -> player.move(-1, 0);
+            case D -> player.move(1, 0);
         }
 
         renderFloor(floor, gridPane);
         renderPlayer();
         
         if (eventManager.triggerEvent(floor)) {
-
-        	presentMonsters.clear();
-        	clearFloorRender();
-        	renderFloor(floor, gridPane);
-        	renderPlayer();
-        	generateMonsters();
+            clearFloorRender();  // Ensures cleared floor before rendering a new one
+            renderFloor(floor, gridPane);
+            renderPlayer();
         }
     }
 
