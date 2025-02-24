@@ -2,11 +2,19 @@ package edu.depaul.rogue.floor;
 
 import edu.depaul.rogue.EventManager;
 import org.junit.jupiter.api.Test;
-
+import edu.depaul.rogue.EventManager;
+import edu.depaul.rogue.RogueGame;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
+
 class FloorTest {
     private EventManager eventManager = new EventManager();
 
+
+    @BeforeEach
+    void setup(){
+        rogueGameInstance = new RogueGame();
+    }
     @Test
     public void testTileCreation() {
         Tile floorTile = new Tile(TileType.FLOOR);
@@ -19,7 +27,7 @@ class FloorTest {
         assertEquals(TileType.START, startTile.getType());
         assertEquals(TileType.FINISH, finishTile.getType());
 
-        // change the type of the tile and verify it changes
+        // Change the type of the tile and verify it changes
         floorTile.setType(TileType.WALL);
         assertEquals(TileType.WALL, floorTile.getType());
     }
@@ -28,29 +36,37 @@ class FloorTest {
     public void testDungeonFloorInitialization() {
         DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
 
+
         dungeon.printFloor();
 
-        // test the bounds created
         assertEquals(10, dungeon.getWidth());
         assertEquals(10, dungeon.getHeight());
-
-        // check if the grid is blank
-//        assertnotNull(dungeon.getGrid());
 
         for (int y = 0; y < dungeon.getHeight(); y++) {
             for (int x = 0; x < dungeon.getWidth(); x++) {
                 assertNotNull(dungeon.getTile(x, y));
             }
+        } 
+    }
+
+    //New method to manually find tile positions if findTilePosition() is missing
+    private int[] findTile(DungeonFloor floor, TileType type) {
+        for (int y = 0; y < floor.getHeight(); y++) {
+            for (int x = 0; x < floor.getWidth(); x++) {
+                if (floor.getTile(x, y).getType() == type) {
+                    return new int[]{x, y};
+                }
+            }
         }
+        return null; // Return null if not found
     }
 
     @Test
     public void testDungeonFloorStartAndFinish() {
         DungeonFloor dungeon = new DungeonFloor(10, 10, eventManager);
-
-        // find the start and finish
-        int[] start = dungeon.findTilePosition(TileType.START);
-        int[] finish = dungeon.findTilePosition(TileType.FINISH);
+        
+        int[] start = findTile(dungeon, TileType.START);
+        int[] finish = findTile(dungeon, TileType.FINISH);
 
         // make sure the floor has start and finish marks
         assertNotNull(start, "Start tile should be placed on the floor");
@@ -80,7 +96,7 @@ class FloorTest {
     public void testPathPossible() {
         DungeonFloor dungeon = new DungeonFloor( 10, 10, eventManager);
         dungeon.generatePassableFloor();
-        // check if the floor is passable
-        assertTrue(dungeon.isPathPossible(), "path should be possible between start and finish");
+        // Check if the floor is passable
+        assertTrue(dungeon.isPathPossible(), "Path should be possible between start and finish");
     }
 }

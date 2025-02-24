@@ -17,6 +17,7 @@ public class PlayerTest {
     @BeforeEach
     void setup() {
         floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+
         player = new CharacterPlayer(floor, 2, 2);
     }
 

@@ -75,7 +75,7 @@ public class RogueGame extends Application {
         eventManager = new EventManager();
         
         // create a floor and generate it
-        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager,this);
         if (floor == null) {
             System.out.println("Failed to create floor.");
             return;
@@ -130,12 +130,16 @@ public class RogueGame extends Application {
     public int getFloorLevel() {
       return floorLevel;
     }
-
+    public void increaseFloorLevel() {
+        floorLevel++;
+    }
+    
     /**
      * Clears the existing floor from the GridPane before rendering the new one.
      */
     private void clearFloorRender() {
         gridPane.getChildren().clear(); // Removes all current tiles from GridPane
+        // floor = null;
     }
 
     /**

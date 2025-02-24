@@ -17,9 +17,9 @@ public class StairsTest {
     @BeforeEach
     void setup() {
         testGame = new RogueGame(); // Create a test game instance
-        testFloor = (DungeonFloor) FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+        testFloor = (DungeonFloor) FloorFactory.createFloor("dungeon", 10, 10, eventManager,testGame);
         testPlayer = new CharacterPlayer(testFloor, 1, 1); 
-        testStairs = new Stairs(1, 1, eventManager);
+        testStairs = new Stairs(1, 1, eventManager,testGame);
     }
 
     @Test

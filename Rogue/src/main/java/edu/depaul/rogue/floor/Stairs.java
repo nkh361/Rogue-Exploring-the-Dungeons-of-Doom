@@ -10,12 +10,13 @@ public class Stairs extends EventTile {
     protected EventManager eventManager;
     private RogueGame gameInstance;
 
-    public Stairs(int x, int y, EventManager eventManager) {
+    public Stairs(int x, int y, EventManager eventManager, RogueGame gameInstance) {
 		super(x, y, eventManager);
 		this.x = x;
 		this.y = y;
 		this.eventManager = eventManager;
 		this.type = TileType.FINISH;
+        this.gameInstance = gameInstance;
 	}
 	
 
@@ -43,7 +44,13 @@ public class Stairs extends EventTile {
 		eventManager.clearEvents();
 		dungeonFloor.generatePassableFloor();
 		player.moveToStart();
-}
 
+        if (gameInstance != null){
+            gameInstance.increaseFloorLevel();
+        } else {
+            System.out.println("Error: gameInstance is null");
+        }
+        
+}
 
 }
