@@ -3,7 +3,7 @@ package edu.depaul.rogue.floor;
 public class Tile {
     protected TileType type;
     protected int x, y;
-    
+
     public Tile(TileType type) {
     	this.type = type;
     }
@@ -12,7 +12,7 @@ public class Tile {
     	this.x = x;
     	this.y = y;
     }
-    
+
     public TileType getType() {
         return type;
     }

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class StairsTest {
 	private static EventManager eventManager;
 	private static int[] TestPos = new int[2];
+  
 	@BeforeAll
 	static void setup() {
 		eventManager = new EventManager();
@@ -42,5 +43,4 @@ public class StairsTest {
 		
 		
 	}
-	
 }

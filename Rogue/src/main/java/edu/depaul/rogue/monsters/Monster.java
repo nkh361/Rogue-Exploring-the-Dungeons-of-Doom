@@ -6,7 +6,6 @@ import edu.depaul.rogue.combat.Fighter;
 public class Monster extends Fighter{
     private final MonsterType type;
     private boolean isDead;
-
     private int[] lvlsFound;
     private int x, y;
 
@@ -17,6 +16,7 @@ public class Monster extends Fighter{
         int[] dmg = type.getDmg();
         int currentHealth = Dice.roll(hpt[0], hpt[1]);
         this.lvlsFound = type.getLvlsFound();
+
         this.lvlsFound = type.getLvlsFound();
         this.isDead = false;
         this.x = x;
@@ -44,6 +44,7 @@ public class Monster extends Fighter{
                 type.getFlag(), lvlsFound[0], lvlsFound[1], x, y
         );
     }
+
 
     public int[] getLvlsFound() {
         return lvlsFound;

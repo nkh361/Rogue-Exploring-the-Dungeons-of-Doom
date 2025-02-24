@@ -1,6 +1,8 @@
 package edu.depaul.rogue.character;
+
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
+import edu.depaul.rogue.floor.TileType;
 import edu.depaul.rogue.floor.Tile;
 
 import java.util.Arrays;
@@ -51,7 +53,7 @@ public class CharacterPlayer extends Fighter{
     		this.y = startPos[1];
     	}
     }
-    
+
 	/**    
 	 * Returns array of positions surrounding player
 	 */
@@ -110,4 +112,5 @@ public class CharacterPlayer extends Fighter{
     	}
     	return Optional.empty();
     }
+
 }

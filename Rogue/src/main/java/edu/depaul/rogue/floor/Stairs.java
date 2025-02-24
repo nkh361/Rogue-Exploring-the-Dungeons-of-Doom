@@ -30,19 +30,15 @@ public class Stairs extends EventTile {
 	public String toString() {
 		return "F";
 	}
-	
-	
 
-	/**
-	 * Defines stair event, which generates a new floor level and places 
-	 * the player at the new start position.
-	 */
+    /**
+     * Defines stair event, which generates a new floor level and places 
+     * the player at the new start position.
+     */
+	@Override
 	public void trigger(DungeonFloor dungeonFloor, CharacterPlayer player) {
 		eventManager.clearEvents();
 		dungeonFloor.generatePassableFloor();
 		player.moveToStart();
 	}
-	  
-	 
-
 }

@@ -17,11 +17,13 @@ import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
@@ -36,6 +38,7 @@ public class RogueGame extends Application {
     private Label playerLabel;
     private EventManager eventManager;
     private HashMap<List<Integer>, Monster> presentMonsters = new HashMap<List<Integer>, Monster>();
+
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -52,6 +55,7 @@ public class RogueGame extends Application {
     public void start(Stage primaryStage) {
         // character stats
         StatsManager statsManager = new StatsManager(100);
+        checkGameOver(statsManager, primaryStage);
         healthBar = new ProgressBar();
         healthBar.progressProperty().bind(statsManager.getHealthStat().currentHealthProperty().divide(100));
         healthBar.setPrefWidth(100);
@@ -78,6 +82,8 @@ public class RogueGame extends Application {
         // create EventManager instance
         eventManager = new EventManager();
 
+        eventManager = new EventManager();
+        
         // create a floor and generate it
         floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
         if (floor == null) {
@@ -118,6 +124,9 @@ public class RogueGame extends Application {
         // generate monsters
         generateMonsters();
 
+        // generate monsters
+        generateMonsters();
+
         // event handler for key presses
         Scene scene = new Scene(root, 400, 400);
         scene.setOnKeyPressed(this::handleKeyPressed);
@@ -129,7 +138,13 @@ public class RogueGame extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-    
+
+    private int floorLevel = 1; // Track current floor level
+
+    public int getFloorLevel() {
+      return floorLevel;
+    }
+
     /**
      * Clears the existing floor from the GridPane before rendering the new one.
      */
@@ -141,7 +156,6 @@ public class RogueGame extends Application {
      * Renders the given floor onto the provided GridPane by creating a visual representation
      * of the floor layout using JavaFX Label components. Each tile on the floor is mapped
      * to the gridPane.
-     *
      *
      * @param floor             The floor object containing the layout to be rendered.
      * @param gridPane          The JavaFX GridPane where the floor layout will be displayed.
@@ -183,6 +197,31 @@ public class RogueGame extends Application {
         }
     }
     
+    private void renderMonster(Monster monster) {
+        Label monsterLabel = new Label(String.valueOf(monster.getType()));
+
+        monsterLabel.setStyle("-fx-font-size: 20px; -fx-text-fill: green;");
+        monsterLabel.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        monsterLabel.setAlignment(Pos.CENTER);
+        gridPane.add(monsterLabel, monster.getX(), monster.getY());
+
+        GridPane.setHgrow(monsterLabel, Priority.ALWAYS);
+        GridPane.setVgrow(monsterLabel, Priority.ALWAYS);
+    }
+
+    private void generateMonsters() {
+        for (int i = 0; i < 3; i++) {
+            int x = (int) (Math.random() * floor.getWidth());
+            int y = (int) (Math.random() * floor.getHeight());
+
+            if (floor.getTile(x, y).isWalkable()) {
+                // FIXME: adjust to be dynamic based on floors
+                Monster monster = MonsterFactory.createMonster('A', x, y);
+                renderMonster(monster);
+            }
+        }
+    }
+
     private void renderMonster(Monster monster) {
         Label monsterLabel = new Label(String.valueOf(monster.getType()));
 
@@ -239,16 +278,52 @@ public class RogueGame extends Application {
         }
 
         renderFloor(floor, gridPane);
-
         renderPlayer();
         
         if (eventManager.triggerEvent(floor)) {
+
         	presentMonsters.clear();
         	clearFloorRender();
         	renderFloor(floor, gridPane);
         	renderPlayer();
         	generateMonsters();
         }
+    }
+
+    private void checkGameOver(StatsManager statsManager, Stage primaryStage) {
+        statsManager.getHealthStat().currentHealthProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.intValue() <= 0) {
+                showGameOverScreen(primaryStage);
+            }
+        });
+    }
+
+    private void showGameOverScreen(Stage primaryStage) {
+        BorderPane gameOverPane = new BorderPane();
+        Label gameOverLabel = new Label("Game Over");
+        gameOverLabel.setFont(Font.font("Monospaced", 30));
+        gameOverLabel.setAlignment(Pos.CENTER);
+
+        Button restartButton = new Button("Restart");
+        restartButton.setOnAction(event -> restartGame(primaryStage));
+
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(event -> System.exit(0));
+
+        VBox buttonBox = new VBox(10, restartButton, exitButton);
+        buttonBox.setAlignment(Pos.CENTER);
+
+        VBox layout = new VBox(20, gameOverPane, buttonBox);
+        layout.setAlignment(Pos.CENTER);
+        gameOverPane.setCenter(layout);
+
+        Scene gameOverScene = new Scene(gameOverPane, 400, 400);
+        primaryStage.setScene(gameOverScene);
+    }
+
+    private void restartGame(Stage primaryStage) {
+        primaryStage.close();
+        start(new Stage());
     }
 
     public static void main(String[] args) {
