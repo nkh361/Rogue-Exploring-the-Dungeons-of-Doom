@@ -1,5 +1,7 @@
 package edu.depaul.rogue.character;
 
+import edu.depaul.rogue.EventManager;
+import edu.depaul.rogue.RogueGame;
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
@@ -14,7 +16,9 @@ public class PlayerTest {
 
     @BeforeEach
     void setup() {
-        floor = FloorFactory.createFloor("dungeon", 10, 10);
+        EventManager eventManager = new EventManager();
+        RogueGame testGame = new RogueGame();
+        floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager,testGame);
         player = new CharacterPlayer(floor, 2, 2);
     }
 

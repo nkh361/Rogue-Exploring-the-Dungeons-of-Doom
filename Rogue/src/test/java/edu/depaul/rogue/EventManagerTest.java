@@ -16,7 +16,8 @@ public class EventManagerTest {
 	@BeforeEach
 	void setup() {
 		eventManager = new EventManager();
-		Floor floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager);
+		RogueGame testGame = new RogueGame();
+		Floor floor = FloorFactory.createFloor("dungeon", 10, 10, eventManager, testGame);
 		dungeon = (DungeonFloor) floor;
 		player = new CharacterPlayer(dungeon, 1, 1);
 		player.moveToStart();
