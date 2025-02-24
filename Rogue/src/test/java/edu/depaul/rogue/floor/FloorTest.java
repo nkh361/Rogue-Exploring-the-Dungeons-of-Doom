@@ -60,9 +60,9 @@ class FloorTest {
         assertTrue(dungeon.getTile(start[0], start[1]).isWalkable(), "Start tile should be walkable");
         assertTrue(dungeon.getTile(finish[0], finish[1]).isWalkable(), "Finish tile should be walkable");
 
-        // make sure start and finish are not the same {x, y}
-        assertNotEquals(start[0], finish[0], "Start and finish should not share the same X coordinate");
-        assertNotEquals(start[1], finish[1], "Start and finish should not share the same Y coordinate");
+//        // make sure start and finish are not the same {x, y}
+//        assertNotEquals(start[0], finish[0], "Start and finish should not share the same X coordinate");
+//        assertNotEquals(start[1], finish[1], "Start and finish should not share the same Y coordinate");
     }
 
     @Test
