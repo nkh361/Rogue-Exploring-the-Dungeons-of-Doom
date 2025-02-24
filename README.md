@@ -10,9 +10,9 @@ Our project is to build a version of Rogue Exploring the Dungeons of Doom with o
 
 ---
 
-## Sprint 2 Demo
+## Sprint 3 Demo
 
-![Demo](media/sprint-2.gif)
+[![Demo](https://img.youtube.com/vi/tX7i1EI4QUU/0.jpg)](https://www.youtube.com/watch?v=tX7i1EI4QUU)
 
 ---
 
