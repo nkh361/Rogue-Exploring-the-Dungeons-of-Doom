@@ -3,6 +3,7 @@ package edu.depaul.rogue;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import edu.depaul.rogue.character.CharacterController;
 import edu.depaul.rogue.character.CharacterFactory;
@@ -113,6 +114,9 @@ public class RogueGame extends Application {
 
         // render the player
         renderPlayer();
+        
+        // generate monsters
+        generateMonsters();
 
         // event handler for key presses
         Scene scene = new Scene(root, 400, 400);
@@ -124,6 +128,13 @@ public class RogueGame extends Application {
         primaryStage.setTitle("Rogue: Exploring the Dungeons of Doom");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+    
+    /**
+     * Clears the existing floor from the GridPane before rendering the new one.
+     */
+    private void clearFloorRender() {
+        gridPane.getChildren().clear(); // Removes all current tiles from GridPane
     }
 
     /**
@@ -205,21 +216,26 @@ public class RogueGame extends Application {
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
      * After player moves, check for event tile.
-     * FIXME: Need a method to clear floor before rendering new level floor.
      *
      * @param event         Event handler for keyboard.
      */
     private void handleKeyPressed(KeyEvent event) {
         switch (event.getCode()) {
-            case W -> player.move(0, -1);
-            case S -> player.move(0, 1);
-            case A -> player.move(-1, 0);
-            case D -> player.move(1, 0);
-            case VK_SPACE:
-            	player.attackMonster(presentMonsters);
-            	for (Monster monster:presentMonsters.values()) {
-            		renderMonster(monster);
+	        case W -> player.move(0, -1);
+	        case S -> player.move(0, 1);
+	        case A -> player.move(-1, 0);
+	        case D -> player.move(1, 0);
+            case SPACE -> {
+            	Optional<Monster> deadMonster = player.attackMonster(presentMonsters);
+            	if (deadMonster.isPresent()) {
+            		clearFloorRender();
+            		renderFloor(floor,gridPane);
+            		renderPlayer();
+	            	for (Monster monster:presentMonsters.values()) {
+	            		renderMonster(monster);
+	            	}
             	}
+            }
         }
 
         renderFloor(floor, gridPane);
@@ -227,8 +243,11 @@ public class RogueGame extends Application {
         renderPlayer();
         
         if (eventManager.triggerEvent(floor)) {
+        	presentMonsters.clear();
+        	clearFloorRender();
         	renderFloor(floor, gridPane);
         	renderPlayer();
+        	generateMonsters();
         }
     }
 

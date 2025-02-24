@@ -11,6 +11,7 @@ public class Monster extends Fighter{
     private int x, y;
 
     public Monster(MonsterType type, int x, int y) {
+    	super();
         this.type = type;
         int[] hpt = type.getHpt();
         int[] dmg = type.getDmg();
@@ -60,8 +61,8 @@ public class Monster extends Fighter{
         return type.getChar();
     }
     
-    public boolean getFlag() {
-    	return (type.getFlag()== 1);
+    public int getFlag() {
+    	return type.getFlag();
     }
 
 }

@@ -45,7 +45,7 @@ public abstract class Fighter {
 		int atkSuccess = 20 - lvl - enemy.getAmr();
 		
 		// Attack only hits if atkRoll is greater than atkSuccess
-		if (atkRoll > atkSuccess) {
+		if (atkRoll >= atkSuccess) {
 			// Base damage is randomized
 			int dmgTotal = Dice.roll(dmg[0], dmg[1]) + this.dmgBonus();
 			// Update enemy's health after it takes damage

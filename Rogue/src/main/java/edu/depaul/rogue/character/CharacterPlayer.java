@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Optional;
 
 import edu.depaul.rogue.combat.Fighter;
 import edu.depaul.rogue.monsters.Monster;
@@ -16,6 +17,7 @@ public class CharacterPlayer extends Fighter{
     private Floor floor;
 
     public CharacterPlayer(Floor floor, int startX, int startY) {
+    	super();
         this.floor = floor;
         this.x = startX;
         this.y = startY;
@@ -50,13 +52,13 @@ public class CharacterPlayer extends Fighter{
     	}
     }
     
-    public int[][] getSurrounding() {
-    	int[][] surrounding = new int[8][2];
+    public Integer[][] getSurrounding() {
+    	Integer[][] surrounding = new Integer[8][2];
     	int i = 0;
     	int playX = this.x;
     	int playY = this.y;
-    	for (int thatX = playX - 1; thatX < playX + 2; playX++) {
-    		for (int thatY = playY - 1; thatY < playY + 2; playY++) {
+    	for (int thatX = playX - 1; thatX < playX + 2; thatX++) {
+    		for (int thatY = playY - 1; thatY < playY + 2; thatY++) {
     			if (thatX != playX || thatY != playY) {
     				surrounding[i][0] = thatX;
     				surrounding[i][1] = thatY;
@@ -75,20 +77,21 @@ public class CharacterPlayer extends Fighter{
     	}
     }
     
-    public void attackMonster(HashMap<List<Integer>, Monster> monsters) {
-    	for (int[] position:this.getSurrounding()) {
+    public Optional<Monster> attackMonster(HashMap<List<Integer>, Monster> monsters) {
+    	for (Integer[] position:this.getSurrounding()) {
     		if(monsters.containsKey(Arrays.asList(position))) {
     			Monster thisMonster = monsters.get(Arrays.asList(position));
-    			if (!thisMonster.getFlag()) {
+    			if (thisMonster.getFlag() == 0) {
     				thisMonster.attack(this);
     			}
     			if (!this.isDead()) {
     				this.attack(thisMonster);
     			}
     			if (thisMonster.isDead()) {
-    				monsters.remove(Arrays.asList(position));
+    				return Optional.of(monsters.remove(Arrays.asList(position)));
     			}
     		}
     	}
+    	return Optional.empty();
     }
 }
