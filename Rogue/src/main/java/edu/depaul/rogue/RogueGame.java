@@ -115,6 +115,8 @@ public class RogueGame extends Application {
         levelLabel.textProperty().bind(Bindings.format("Level: %d",
                 statsManager.getExperienceManager().levelProperty()));
 
+        // placeholder for inventory related things
+
         GridPane statsPane = new GridPane();
         statsPane.setHgap(10);
         statsPane.add(healthLabel, 0, 0);
