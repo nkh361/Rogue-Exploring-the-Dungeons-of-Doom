@@ -31,6 +31,10 @@ public class Inventory {
         }
     }
 
+    public Item get(int index) {
+        return items.get(index);
+    }
+
     public int getSize() {
         return items.size();
     }

@@ -10,6 +10,8 @@ import edu.depaul.rogue.character.CharacterFactory;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.inventory.Inventory;
+import edu.depaul.rogue.inventory.Item;
 import edu.depaul.rogue.monsters.Monster;
 import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
@@ -31,6 +33,9 @@ import javafx.scene.input.KeyEvent;
 public class RogueGame extends Application {
     private ProgressBar healthBar;
     private Label healthLabel;
+    private Label selectedItemLabel;
+    private Inventory inventory = new Inventory(5);
+    private int selectedItemIndex = 0;
     private ProgressBar xpBar;
     private Label xpLabel;
     private Label levelLabel;
@@ -109,7 +114,6 @@ public class RogueGame extends Application {
         levelLabel = new Label();
         levelLabel.textProperty().bind(Bindings.format("Level: %d",
                 statsManager.getExperienceManager().levelProperty()));
-
 
         GridPane statsPane = new GridPane();
         statsPane.setHgap(10);

@@ -46,6 +46,7 @@ class WeaponTest {
         inventory.addItem(dagger);
         inventory.addItem(twoSword);
 
+        System.out.println("index 2: " + inventory.get(2).getName());
         System.out.println("items before removal: " + inventory.getItems());
 
         inventory.removeItem(mace);
