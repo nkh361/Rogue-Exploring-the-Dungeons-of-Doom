@@ -1,20 +1,28 @@
 package edu.depaul.rogue.inventory;
 
-public class Weapon extends Item {
-    private int damage;
+import edu.depaul.rogue.dice.Dice;
 
-    public Weapon(String name, int damage, int weight) {
+public class Weapon extends Item {
+    private int diceSides;
+    private int numDice;
+
+    public Weapon(String name, int weight, int numDice, int diceSides) {
         super(name, weight);
-        this.damage = damage;
+        this.numDice = numDice;
+        this.diceSides = diceSides;
+    }
+
+    public int rollDamage() {
+        return Dice.roll(numDice, diceSides);
+    }
+
+    public int[] getDice() {
+        return new int[]{numDice, diceSides};
     }
 
     @Override
     public void use() {
-        System.out.println(getName() + " uses " + damage + " damage");
-    }
-
-    public int getDamage() {
-        return damage;
+        System.out.println(getName() + " uses " + numDice + "d" + diceSides + " damage");
     }
 
 }
