@@ -16,6 +16,10 @@ public class Weapon extends Item {
         return Dice.roll(numDice, diceSides);
     }
 
+    public int[] getDice() {
+        return new int[]{numDice, diceSides};
+    }
+
     @Override
     public void use() {
         System.out.println(getName() + " uses " + numDice + "d" + diceSides + " damage");

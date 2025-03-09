@@ -10,8 +10,7 @@ import edu.depaul.rogue.character.CharacterFactory;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
-import edu.depaul.rogue.inventory.Inventory;
-import edu.depaul.rogue.inventory.Item;
+import edu.depaul.rogue.inventory.*;
 import edu.depaul.rogue.monsters.Monster;
 import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
@@ -19,10 +18,13 @@ import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.application.Application;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -33,10 +35,8 @@ import javafx.scene.input.KeyEvent;
 public class RogueGame extends Application {
     private ProgressBar healthBar;
     private Label healthLabel;
-    private Label selectedItemLabel;
-    private Inventory inventory = new Inventory(5);
-    private int selectedItemIndex = 0;
     private ProgressBar xpBar;
+    private Label invLabel;
     private Label xpLabel;
     private Label levelLabel;
     private CharacterPlayer player;
@@ -46,6 +46,9 @@ public class RogueGame extends Application {
     private Label playerLabel;
     private EventManager eventManager;
     private HashMap<List<Integer>, Monster> presentMonsters = new HashMap<List<Integer>, Monster>();
+    private Inventory inventory = new Inventory(10);
+    private int invIndex = 0;
+    private StringProperty invText = new SimpleStringProperty("Fists");
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -115,7 +118,19 @@ public class RogueGame extends Application {
         levelLabel.textProperty().bind(Bindings.format("Level: %d",
                 statsManager.getExperienceManager().levelProperty()));
 
-        // placeholder for inventory related things
+        // inventory items
+        Longsword longsword = new Longsword();
+        Dagger dagger = new Dagger();
+        TwoSword twoSword = new TwoSword();
+        Mace mace = new Mace();
+
+        inventory.addItem(longsword);
+        inventory.addItem(dagger);
+        inventory.addItem(twoSword);
+        inventory.addItem(mace);
+
+        invLabel = new Label();
+        invLabel.textProperty().bind(invText);
 
         GridPane statsPane = new GridPane();
         statsPane.setHgap(10);
@@ -124,6 +139,7 @@ public class RogueGame extends Application {
         statsPane.add(levelLabel, 0, 1);
         statsPane.add(xpLabel, 1, 1);
         statsPane.add(xpBar, 1, 2);
+        statsPane.add(invLabel, 1, 3);
 
         BorderPane root = new BorderPane();
         root.setBottom(statsPane);
@@ -294,6 +310,25 @@ public class RogueGame extends Application {
 	            		renderMonster(monster);
 	            	}
             	}
+            }
+
+            case H, L -> {
+                if (inventory.isEmpty()) {
+                    invText.set("Fists");
+                } else {
+                    if (event.getCode() == KeyCode.H) {
+                        invIndex = (invIndex - 1 + inventory.getSize()) % inventory.getSize();
+                    } else if (event.getCode() == KeyCode.L) {
+                        invIndex = (invIndex + 1) % inventory.getSize();
+                    }
+                    Item currentItem = inventory.get(invIndex);
+                    invText.set("Currently equipped: " + currentItem.getName());
+                    if (currentItem instanceof Weapon) {
+                        Weapon weapon = (Weapon) currentItem;
+                        int[] diceVals = weapon.getDice();
+                        player.setDmg(diceVals[0], diceVals[1]);
+                    }
+                }
             }
         }
 
