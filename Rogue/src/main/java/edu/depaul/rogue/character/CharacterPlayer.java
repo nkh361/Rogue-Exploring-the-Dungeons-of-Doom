@@ -14,6 +14,7 @@ import edu.depaul.rogue.monsters.Monster;
 
 public class CharacterPlayer extends Fighter{
     private int x, y;
+    private int exp;
     private Floor floor;
 
     public CharacterPlayer(Floor floor, int startX, int startY) {
@@ -21,6 +22,7 @@ public class CharacterPlayer extends Fighter{
         this.floor = floor;
         this.x = startX;
         this.y = startY;
+        this.exp = 0;
         // FIXME: player's starting stats
         super.setFighter(1, 1, 100, 10, 1, 10);
     }
@@ -72,6 +74,10 @@ public class CharacterPlayer extends Fighter{
     	return surrounding;
     }
     
+    public int getExp() {
+    	return this.exp;
+    }
+    
     
 	/**
 	 * Overrides Fighter attack method so that enemy attacks after player attacks
@@ -104,6 +110,7 @@ public class CharacterPlayer extends Fighter{
     				this.attack(thisMonster);
     			}
     			if (thisMonster.isDead()) {
+    				this.exp += thisMonster.getExp();
     				return Optional.of(monsters.remove(Arrays.asList(position)));
     			}
     		}
