@@ -15,6 +15,7 @@ import edu.depaul.rogue.monsters.Monster;
 import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
 import edu.depaul.rogue.character.CharacterPlayer;
+import edu.depaul.rogue.hunger.*;
 import javafx.application.Application;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.Bindings;
@@ -29,6 +30,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.input.KeyEvent;
 
@@ -49,6 +51,8 @@ public class RogueGame extends Application {
     private Inventory inventory = new Inventory(10);
     private int invIndex = 0;
     private StringProperty invText = new SimpleStringProperty("Fists");
+    private Hunger hunger = new Hunger();
+    private Label hungerLabel;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -117,17 +121,41 @@ public class RogueGame extends Application {
         levelLabel = new Label();
         levelLabel.textProperty().bind(Bindings.format("Level: %d",
                 statsManager.getExperienceManager().levelProperty()));
-
+        
+        hungerLabel = new Label();
+        hungerLabel.textProperty().bind(Bindings.createStringBinding(() -> {
+        	int value = hunger.getHungerValue();
+        	return switch (value) {
+    		case 0 -> "Full";
+    		case 1 -> "Satisfied";
+    		case 2 -> "Hungry";
+    		case 3 -> "Starving";
+    		default -> "";
+        	};
+        }, hunger.hungerProperty()));
+        
+        hungerLabel.textFillProperty().bind(Bindings.createObjectBinding(() -> {
+        	int value = hunger.getHungerValue();
+        	return switch (value) {
+        	case 0, 1 -> Color.web("#32a850");
+        	case 2 -> Color.web("#dbac02");
+        	case 3 -> Color.web("#d63e20");
+        	default -> Color.web("#000000");
+        	};
+        }, hunger.hungerProperty()));
+        
         // inventory items
         Longsword longsword = new Longsword();
         Dagger dagger = new Dagger();
         TwoSword twoSword = new TwoSword();
         Mace mace = new Mace();
+        Food food = new Food(hunger, inventory);
 
         inventory.addItem(longsword);
         inventory.addItem(dagger);
         inventory.addItem(twoSword);
         inventory.addItem(mace);
+        inventory.addItem(food);
 
         invLabel = new Label();
         invLabel.textProperty().bind(invText);
@@ -140,6 +168,7 @@ public class RogueGame extends Application {
         statsPane.add(xpLabel, 1, 1);
         statsPane.add(xpBar, 1, 2);
         statsPane.add(invLabel, 1, 3);
+        statsPane.add(hungerLabel, 0, 2);
 
         BorderPane root = new BorderPane();
         root.setBottom(statsPane);
@@ -183,6 +212,7 @@ public class RogueGame extends Application {
         player = CharacterFactory.createPlayer(floor, startX, startY);
 
         eventManager.setPlayer(player);
+        hunger.setPlayer(player);
 
         // render the floor in the GridPane
         renderFloor(floor, gridPane);
@@ -239,6 +269,20 @@ public class RogueGame extends Application {
                 GridPane.setVgrow(label, Priority.ALWAYS);
             }
         }
+        
+        if (player.isDead()) {
+        	gameOver();
+        }
+    }
+    
+    private void gameOver() {
+    	Label gameOverLabel = new Label("Game Over");
+    	gridPane.getChildren().remove(playerLabel);
+    	clearFloorRender();
+    	gridPane.setAlignment(Pos.CENTER);
+    	gameOverLabel.setStyle("-fx-font-size: 60px; -fx-text-fill: red;");
+    	gameOverLabel.setAlignment(Pos.CENTER);
+    	gridPane.add(gameOverLabel, 0, 0);
     }
 
     private void generateMonsters() {
@@ -295,6 +339,7 @@ public class RogueGame extends Application {
      * @param event         Event handler for keyboard.
      */
     private void handleKeyPressed(KeyEvent event) {
+    	hunger.takeTurn();
         switch (event.getCode()) {
 	        case W -> player.move(0, -1);
 	        case S -> player.move(0, 1);
