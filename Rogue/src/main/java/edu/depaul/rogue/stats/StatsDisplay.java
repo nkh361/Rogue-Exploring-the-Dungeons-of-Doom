@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 public class StatsDisplay extends Application {
     private ProgressBar healthBar;
     private Label healthLabel;
+    private Label goldLabel;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -22,8 +23,15 @@ public class StatsDisplay extends Application {
         healthLabel = new Label();
         healthLabel.textProperty().bind(statsManager.getHealthStat().currentHealthProperty().asString("HP: %d/100"));
 
+        goldLabel = new Label(); 
+        goldLabel.textProperty().bind(statsManager.goldProperty().asString("Gold: %d")); 
+
+
+
         BorderPane root = new BorderPane();
         root.setBottom(healthLabel);
+        root.setTop(goldLabel);
+        
         BorderPane.setAlignment(healthLabel, javafx.geometry.Pos.BOTTOM_LEFT);
 
         Scene scene = new Scene(root, 300, 150);

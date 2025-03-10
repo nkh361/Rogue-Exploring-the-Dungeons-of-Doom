@@ -7,10 +7,10 @@ public class Tile {
     public Tile(TileType type) {
         this.type = type;
     }
-    
+
     public Tile(int x, int y) {
-    	this.x = x;
-    	this.y = y;
+        this.x = x;
+        this.y = y;
     }
 
     public TileType getType() {
@@ -20,27 +20,20 @@ public class Tile {
     public void setType(TileType type) {
         this.type = type;
     }
-    
+
     public int[] getTilePosition() {
-    	int[] tilePosition = {this.x, this.y};
-    	return tilePosition;
+        return new int[]{this.x, this.y};
     }
-    
+
     public void setTilePosition(int x, int y) {
-    	this.x = x;
-    	this.y = y;
+        this.x = x;
+        this.y = y;
     }
 
-	/**
-	 * All tiles are walkable, except WALL.
-	 */
     public boolean isWalkable() {
-        return (type != TileType.WALL);
+        return type != TileType.WALL;
     }
 
-    /**
-     * String representation of the tile
-     */
     @Override
     public String toString() {
         return switch (type) {
@@ -48,6 +41,7 @@ public class Tile {
             case WALL -> "#";
             case START -> "S";
             case FINISH -> "F";
+            case GOLD -> "G"; 
         };
     }
 }

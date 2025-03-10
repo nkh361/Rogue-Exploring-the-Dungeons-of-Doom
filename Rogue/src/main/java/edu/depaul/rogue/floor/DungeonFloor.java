@@ -66,10 +66,11 @@ public class DungeonFloor extends Floor {
         } while (!grid[startY][startX].isWalkable());
 
         // place the finish on a different walkable tile
+                // Ensure Finish is placed on a different row than Start
         do {
             finishX = random.nextInt(width);
             finishY = random.nextInt(height);
-        } while ((finishX == startX && finishY == startY) || !grid[finishY][finishX].isWalkable());
+        } while ((finishX == startX && finishY == startY) || finishY == startY || !grid[finishY][finishX].isWalkable());
 
         // set the start/finish tiles
         grid[startY][startX] = new Tile(TileType.START);
@@ -79,6 +80,30 @@ public class DungeonFloor extends Floor {
         this.finish = (Stairs) grid[finishY][finishX];
         
 
+    }
+    private void placeGold(Random random) {
+        int goldCount = (width * height) / 20; // ~5% of tiles are gold
+        for (int i = 0; i < goldCount; i++) {
+            int x, y;
+            do {
+                x = random.nextInt(width);
+                y = random.nextInt(height);
+            } while (grid[y][x].getType() != TileType.FLOOR); // Only place gold on floor tiles
+
+            grid[y][x] = new Tile(TileType.GOLD);
+        }
+    }
+    @Override
+    protected void generateFloor() {
+        Random random = new Random();
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                grid[y][x] = random.nextDouble() < 0.8 ? new Tile(TileType.FLOOR) : new Tile(TileType.WALL);
+            }
+        }
+
+        placeStartAndFinish(random);
+        placeGold(random); // NEW: Place gold tiles
     }
 
     int[] findTilePosition(TileType type) {
@@ -160,22 +185,7 @@ public class DungeonFloor extends Floor {
      * - A helper method `placeStartAndFinish` is called to place the START
      *   and FINISH tiles.
      */
-    @Override
-    protected void generateFloor() {
-        Random random = new Random();
-        // fill grid with WALL tiles by default
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                // 80% chance of floor
-                if (random.nextDouble() < 0.8) {
-                    grid[y][x] = new Tile(TileType.FLOOR);
-                }
-                else {
-                    grid[y][x] = new Tile(TileType.WALL);
-                }
-            }
-        }
-        placeStartAndFinish(random);
+    
 
         /**
         int startY = height / 2;  // middle row for the path
@@ -189,7 +199,7 @@ public class DungeonFloor extends Floor {
         grid[startY][1] = new Tile(TileType.START);
         grid[startY][width - 2] = new Tile(TileType.FINISH);
          */
-    }
+    
 
     // debugging
     // NOTE: use print to avoid adding new line at the end, otherwise next output wont appear
@@ -202,6 +212,7 @@ public class DungeonFloor extends Floor {
                     case WALL -> System.out.print("#");
                     case START -> System.out.print("S");
                     case FINISH -> System.out.print("F");
+                    case GOLD -> System.out.print("G");
                 }
                 System.out.print(" ");
             }
