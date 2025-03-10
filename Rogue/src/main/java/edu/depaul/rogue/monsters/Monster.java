@@ -64,5 +64,9 @@ public class Monster extends Fighter{
     public int getFlag() {
     	return type.getFlag();
     }
+    
+    public int getExp() {
+    	return type.getExp();
+    }
 
 }
