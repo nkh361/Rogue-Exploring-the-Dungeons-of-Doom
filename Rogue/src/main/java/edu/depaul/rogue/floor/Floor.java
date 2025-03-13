@@ -10,6 +10,13 @@ public abstract class Floor {
         this.grid = new Tile[height][width];
     }
 
+    public void setTile(int x, int y, Tile tile) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            grid[y][x] = tile;
+        } else {
+            System.out.println("Attempted to set tile outside of floor bounds");
+        }
+    }
     /**
      * Abstract method will be implemented by a sublclass, it'll define how the floor layout is generated.
      */
@@ -56,6 +63,7 @@ public abstract class Floor {
             System.out.println();
         }
     }
+
 
     public int getWidth() {
         return width;

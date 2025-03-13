@@ -1,4 +1,5 @@
 package edu.depaul.rogue.floor;
+import edu.depaul.rogue.inventory.Armor;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -95,6 +96,48 @@ public class DungeonFloor extends Floor {
         return null;
     }
 
+    public void placeArmorTiles() {
+        Random random = new Random();
+        int numberOfArmorTiles = 2;
+        for (int i = 0; i < NumberOfArmorTiles; i++) {
+            int x, y;
+            do {
+                x = random.nextInt(getWidth());
+                y = random.nextInt(getHeight());
+            } while (!(getTile(x, y) instanceof Floor) || getTile(x, y) instanceof ArmorTile); // Ensure not to overwrite other special tiles
+
+            Armor armor = new Armor("Iron Armor", 20); // Example armor creation
+            setTile(x, y, new ArmorTile(x, y, armor));
+        }
+    }
+/*
+    private void placeArmorTiles(Random random) {
+
+        int numberOfArmorTiles = 1; // For simplicity, you can adjust based on your game balance
+        for (int i = 0; i < numberOfArmorTiles; i++) {
+            int x, y;
+            do {
+                x = random.nextInt(width);
+                y = random.nextInt(height);
+            } while (!grid[y][x].isWalkable() || grid[y][x].getType() != TileType.FLOOR);
+            TileType armorType = selectArmorType(random);
+            setTile(x, y, new Tile(armorType));
+        }
+    }
+*/
+    private TileType selectArmorType(Random random) {
+        double chance = random.nextDouble();
+        if (chance < 0.01) return TileType.DIAMOND_ARMOR; // 1% chance for diamond armor
+        if (chance < 0.05) return TileType.IRON_ARMOR;   // Additional 4% chance for iron armor
+        return TileType.LEATHER_ARMOR;                  // 95% chance for leather armor
+    }
+
+    public void setTile(int x, int y, Tile tile) {
+        if (x >= 0 && x < width && y >= 0 && y < height) {
+            grid[y][x] = tile;
+        }
+    }
+
     boolean isPathPossible() {
         int[] startPos = findTilePosition(TileType.START);
         int[] finishPos = findTilePosition(TileType.FINISH); 
@@ -178,6 +221,7 @@ public class DungeonFloor extends Floor {
             }
         }
         placeStartAndFinish(random);
+        placeArmorTiles(random);
 
         /**
         int startY = height / 2;  // middle row for the path

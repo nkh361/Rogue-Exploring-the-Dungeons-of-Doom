@@ -1,8 +1,11 @@
 package edu.depaul.rogue.floor;
 
+import edu.depaul.rogue.inventory.Armor;
+
 public class Tile {
     protected TileType type;
     protected int x, y;
+    private Armor armor;
     
     public Tile(TileType type) {
     	this.type = type;
@@ -11,6 +14,7 @@ public class Tile {
     public Tile(int x, int y) {
     	this.x = x;
     	this.y = y;
+        this.type = type;
     }
     
     public TileType getType() {
@@ -19,6 +23,14 @@ public class Tile {
 
     public void setType(TileType type) {
         this.type = type;
+    }
+
+    public Armor getArmor() {
+        return armor;
+    }
+
+    public void setArmor(Armor armor) {
+        this.armor = armor;
     }
     
     public int[] getTilePosition() {
@@ -48,6 +60,8 @@ public class Tile {
             case WALL -> "#";
             case START -> "S";
             case FINISH -> "F";
+            case LEATHER_ARMOR, IRON_ARMOR, DIAMOND_ARMOR -> "^";
+            default -> "?";  // Fallback for any unhandled TileType
         };
     }
 }

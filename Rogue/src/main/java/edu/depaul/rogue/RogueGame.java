@@ -7,9 +7,8 @@ import java.util.Optional;
 
 import edu.depaul.rogue.character.CharacterController;
 import edu.depaul.rogue.character.CharacterFactory;
-import edu.depaul.rogue.floor.Floor;
-import edu.depaul.rogue.floor.FloorFactory;
-import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.floor.*;
+import edu.depaul.rogue.inventory.Armor;
 import edu.depaul.rogue.monsters.Monster;
 import edu.depaul.rogue.monsters.MonsterFactory;
 import edu.depaul.rogue.stats.StatsManager;
@@ -34,6 +33,7 @@ public class RogueGame extends Application {
     private ProgressBar xpBar;
     private Label xpLabel;
     private Label levelLabel;
+    private Label armorLabel = new Label();
     private CharacterPlayer player;
     private CharacterController characterController;
     private GridPane gridPane;
@@ -41,6 +41,7 @@ public class RogueGame extends Application {
     private Label playerLabel;
     private EventManager eventManager;
     private HashMap<List<Integer>, Monster> presentMonsters = new HashMap<List<Integer>, Monster>();
+
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -111,6 +112,8 @@ public class RogueGame extends Application {
                 statsManager.getExperienceManager().levelProperty()));
 
 
+        armorLabel = new Label("Armor: None");
+
         GridPane statsPane = new GridPane();
         statsPane.setHgap(10);
         statsPane.add(healthLabel, 0, 0);
@@ -118,6 +121,7 @@ public class RogueGame extends Application {
         statsPane.add(levelLabel, 0, 1);
         statsPane.add(xpLabel, 1, 1);
         statsPane.add(xpBar, 1, 2);
+        statsPane.add(armorLabel, 0, 3);
 
         BorderPane root = new BorderPane();
         root.setBottom(statsPane);
@@ -164,6 +168,8 @@ public class RogueGame extends Application {
 
         // render the floor in the GridPane
         renderFloor(floor, gridPane);
+
+        updateArmorLabel();
 
         // render the player
         renderPlayer();
@@ -278,6 +284,9 @@ public class RogueGame extends Application {
 	        case S -> player.move(0, 1);
 	        case A -> player.move(-1, 0);
 	        case D -> player.move(1, 0);
+            case SHIFT -> {
+                System.out.println("SHIFT key pressed");pickUpArmorIfPossible();
+            }
             case SPACE -> {
             	Optional<Monster> deadMonster = player.attackMonster(presentMonsters);
             	if (deadMonster.isPresent()) {
@@ -303,6 +312,35 @@ public class RogueGame extends Application {
         	generateMonsters();
         }
     }
+
+    private void pickUpArmorIfPossible() {
+        Tile currentTile = floor.getTile(player.getX(), player.getY());
+        if (currentTile instanceof ArmorTile) {
+            Armor foundArmor = ((ArmorTile) currentTile).getArmor();
+            if (foundArmor != null) {
+                player.addArmor(foundArmor);
+                System.out.println("Picked up: " + foundArmor.getName());
+                updateArmorLabel();
+                // Optionally change the tile to FLOOR or another type after picking up armor
+                ((DungeonFloor) floor).setTile(player.getX(), player.getY(), new Tile(TileType.FLOOR));
+            } else {
+                System.out.println("No armor on this tile");
+            }
+        } else {
+            System.out.println("Not standing on an Armor Tile");
+        }
+    }
+
+
+    // Method to update armor label
+    private void updateArmorLabel() {
+        if (player != null && player.getCurrentArmor() != null) {
+            armorLabel.setText("Armor: " + player.getCurrentArmor().getName());
+        } else {
+            armorLabel.setText("Armor: None");
+        }
+    }
+
 
     public static void main(String[] args) {
         launch(args);

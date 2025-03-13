@@ -1,5 +1,6 @@
 package edu.depaul.rogue.stats;
 
+import edu.depaul.rogue.character.CharacterPlayer;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
@@ -7,8 +8,9 @@ public class StatsDisplay extends VBox {
     private Label healthLabel;
     private Label xpLabel;
     private Label levelLabel;
+    private Label armorLabel;
 
-    public StatsDisplay() {
+    public StatsDisplay(CharacterPlayer player) {
         StatsManager statsManager = StatsManager.getInstance();
 
         healthLabel = new Label();
@@ -20,6 +22,8 @@ public class StatsDisplay extends VBox {
         levelLabel = new Label();
         levelLabel.textProperty().bind(statsManager.getExperienceManager().levelProperty().asString());
 
-        this.getChildren().addAll(healthLabel, xpLabel, levelLabel);
+        armorLabel = new Label("Armor: None");
+        armorLabel.textProperty().bind(player.currentArmorProperty());
+        this.getChildren().addAll(healthLabel, xpLabel, levelLabel, armorLabel);
     }
 }

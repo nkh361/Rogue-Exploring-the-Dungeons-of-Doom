@@ -2,6 +2,13 @@ package edu.depaul.rogue.character;
 import edu.depaul.rogue.floor.DungeonFloor;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.floor.TileType;
+import edu.depaul.rogue.inventory.Armor;
+import edu.depaul.rogue.floor.ArmorTile;
+import edu.depaul.rogue.stats.StatsManager;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -15,6 +22,9 @@ import edu.depaul.rogue.monsters.Monster;
 public class CharacterPlayer extends Fighter{
     private int x, y;
     private Floor floor;
+	private List<Armor> armors = new ArrayList<>();
+	private int currentArmorIndex = -1; // -1 when no armor is equipped
+	private StringProperty currentArmorDescription = new SimpleStringProperty("");
 
     public CharacterPlayer(Floor floor, int startX, int startY) {
     	super();
@@ -29,18 +39,71 @@ public class CharacterPlayer extends Fighter{
      * Moves the player based on input direction.
      * Ensures movement is within walkable areas (FLOOR tiles).
      */
-    public void move(int dx, int dy) {
-        int newX = x + dx;
-        int newY = y + dy;
+	public void move(int dx, int dy) {
+		int newX = x + dx;
+		int newY = y + dy;
+		Tile newTile = floor.getTile(newX, newY);
 
-        if (floor.getTile(newX, newY).isWalkable()) {
-            x = newX;
-            y = newY;
-        }
-    }
+		if (newTile.isWalkable()) {
+			x = newX;
+			y = newY;
+			if (newTile instanceof ArmorTile) {
+				Armor foundArmor = ((ArmorTile) newTile).getArmor();
+				armors.add(foundArmor);
+				// Cast to DungeonFloor to use setTile
+				if (floor instanceof DungeonFloor) {
+					DungeonFloor dungeonFloor = (DungeonFloor) floor;
+					dungeonFloor.setTile(newX, newY, new Tile(TileType.FLOOR));
+				} else {
+					// Optionally handle the case where the cast is not possible
+					System.out.println("The floor is not a DungeonFloor instance.");
+				}
+			}
+		}
+	}
 
-    public int getX() { return x; }
+	public void pickUpArmor(Armor armor) {
+		if (armor != null) {
+			// Add the armor to the player's inventory
+			armors.add(armor);
+			// Equip the armor
+			equipArmor(armor);
+		}
+	}
+
+	public void addArmor(Armor armor) {
+		armors.add(armor);
+		if (currentArmorIndex == -1) { // If no armor was equipped before
+			currentArmorIndex = 0; // Equip the first armor picked up
+		}
+		currentArmorDescription.set(armors.get(currentArmorIndex).getName() + " (+ " + armors.get(currentArmorIndex).getHealthBonus() + " HP)");
+	}
+
+	private void equipArmor(Armor armor) {
+		currentArmorIndex = armors.indexOf(armor);
+		currentArmorDescription.set(armor.getName() + " (+ " + armor.getHealthBonus() + " HP)");
+		StatsManager.getInstance().getHealthStat().increaseMaxHealth(armor.getHealthBonus());
+	}
+
+	public void cycleArmor() {
+		if (armors.isEmpty()) return;
+		currentArmorIndex = (currentArmorIndex + 1) % armors.size();
+		equipArmor(armors.get(currentArmorIndex));
+	}
+
+	public Armor getCurrentArmor() {
+		if (currentArmorIndex != -1 && !armors.isEmpty()) {
+			return armors.get(currentArmorIndex);
+		}
+		return null;
+	}
+
+	public int getX() { return x; }
     public int getY() { return y; }
+
+	public StringProperty currentArmorProperty() {
+		return currentArmorDescription;
+	}
     
     public void moveToStart() {
     	if (floor instanceof DungeonFloor) {
