@@ -98,7 +98,7 @@ public class DungeonFloor extends Floor {
 
     public void placeArmorTiles() {
         Random random = new Random();
-        int numberOfArmorTiles = 2;
+        int NumberOfArmorTiles = 2;
         for (int i = 0; i < NumberOfArmorTiles; i++) {
             int x, y;
             do {
