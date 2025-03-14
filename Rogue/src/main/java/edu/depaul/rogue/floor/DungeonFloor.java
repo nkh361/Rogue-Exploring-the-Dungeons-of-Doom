@@ -83,6 +83,22 @@ public class DungeonFloor extends Floor {
 
     }
 
+    private void placeGold(Random random) {
+        int startX, startY, finishX, finishY;
+
+        int goldCount = (width * height)  / 20;     // ~5% of tiles are gold
+        for (int i = 0; i < goldCount; i++) {
+            int x, y;
+
+            do {
+                x = random.nextInt(width);
+                y = random.nextInt(height);
+            } while (!grid[y][x].isWalkable());
+
+            grid[y][x] = new Tile(TileType.GOLD);
+        }
+    }
+
     int[] findTilePosition(TileType type) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -178,19 +194,7 @@ public class DungeonFloor extends Floor {
             }
         }
         placeStartAndFinish(random);
-
-        /**
-        int startY = height / 2;  // middle row for the path
-
-        // make sure all tiles in the row (except walls) are FLOOR
-        for (int x = 1; x < width - 1; x++) {
-            grid[startY][x] = new Tile(TileType.FLOOR);  // fill row with FLOOR
-        }
-
-        // set START and FINISH points
-        grid[startY][1] = new Tile(TileType.START);
-        grid[startY][width - 2] = new Tile(TileType.FINISH);
-         */
+        placeGold(random);
     }
 
     // debugging

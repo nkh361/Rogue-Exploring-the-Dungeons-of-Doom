@@ -10,6 +10,7 @@ import edu.depaul.rogue.character.CharacterFactory;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
+import edu.depaul.rogue.floor.TileType;
 import edu.depaul.rogue.inventory.*;
 import edu.depaul.rogue.monsters.Monster;
 import edu.depaul.rogue.monsters.MonsterFactory;
@@ -41,6 +42,9 @@ public class RogueGame extends Application {
     private Label invLabel;
     private Label xpLabel;
     private Label levelLabel;
+    private Label goldLabel;
+    private StringProperty goldText = new SimpleStringProperty("Gold: 0");
+    private int goldAmount = 0;
     private CharacterPlayer player;
     private CharacterController characterController;
     private GridPane gridPane;
@@ -50,7 +54,7 @@ public class RogueGame extends Application {
     private HashMap<List<Integer>, Monster> presentMonsters = new HashMap<List<Integer>, Monster>();
     private Inventory inventory = new Inventory(10);
     private int invIndex = 0;
-    private StringProperty invText = new SimpleStringProperty("Fists");
+    private StringProperty invText = new SimpleStringProperty("Currently equipped: Fists");
     private Hunger hunger = new Hunger();
     private Label hungerLabel;
 
@@ -143,6 +147,10 @@ public class RogueGame extends Application {
         	default -> Color.web("#000000");
         	};
         }, hunger.hungerProperty()));
+
+        // gold label
+        goldLabel = new Label("Gold: ");
+        goldLabel.textProperty().bind(goldText);
         
         // inventory items
         Longsword longsword = new Longsword();
@@ -169,6 +177,7 @@ public class RogueGame extends Application {
         statsPane.add(xpBar, 1, 2);
         statsPane.add(invLabel, 1, 3);
         statsPane.add(hungerLabel, 0, 2);
+        statsPane.add(goldLabel, 1, 4);
 
         BorderPane root = new BorderPane();
         root.setBottom(statsPane);
@@ -387,6 +396,18 @@ public class RogueGame extends Application {
         	renderFloor(floor, gridPane);
         	renderPlayer();
         	generateMonsters();
+        }
+
+        checkForGold(player.getX(), player.getY());
+    }
+
+    private void checkForGold(int x, int y) {
+        Tile tile = floor.getTile(x, y);
+        if (tile.toString().equals("G")) {
+            goldAmount++;
+            goldText.set("Gold: " + goldAmount);
+
+            tile.setType(TileType.FLOOR);
         }
     }
 

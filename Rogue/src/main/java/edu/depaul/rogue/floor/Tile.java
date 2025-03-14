@@ -48,6 +48,7 @@ public class Tile {
             case WALL -> "#";
             case START -> "S";
             case FINISH -> "F";
+            case GOLD -> "G";
         };
     }
 }
