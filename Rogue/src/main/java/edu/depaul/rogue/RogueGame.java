@@ -30,6 +30,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
@@ -41,6 +42,7 @@ public class RogueGame extends Application {
     private Label healthLabel;
     private ProgressBar xpBar;
     private Label invLabel;
+    private Label armorLabel;
     private Label xpLabel;
     private Label levelLabel;
     private Label goldLabel;
@@ -61,6 +63,9 @@ public class RogueGame extends Application {
     private Label floorNumLabel;
     private StringProperty floorNumText= new SimpleStringProperty("Floor: 1");
     private int floorNumCount = 1;
+    private Inventory armorInventory = new Inventory(10);
+    private int armorIndex = 0;
+    private StringProperty armorText = new SimpleStringProperty("Currently equipped: None");
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -159,8 +164,26 @@ public class RogueGame extends Application {
         // floor number label
         floorNumLabel = new Label("Floor: ");
         floorNumLabel.textProperty().bind(floorNumText);
-        
-        // inventory items
+
+        // armor inventory items
+        BandedMailArmor bandedMailArmor = new BandedMailArmor();
+        ChainArmor chainArmor = new ChainArmor();
+        LeatherArmor leatherArmor = new LeatherArmor();
+        PlateMail plateMail = new PlateMail();
+        ScaleMailArmor scaleMailArmor = new ScaleMailArmor();
+        StuddedLeatherArmor studdedLeatherArmor = new StuddedLeatherArmor();
+
+        armorInventory.addItem(bandedMailArmor);
+        armorInventory.addItem(chainArmor);
+        armorInventory.addItem(leatherArmor);
+        armorInventory.addItem(plateMail);
+        armorInventory.addItem(scaleMailArmor);
+        armorInventory.addItem(studdedLeatherArmor);
+
+        armorLabel = new Label();
+        armorLabel.textProperty().bind(armorText);
+
+        // weapons and sticks inventory items
         Longsword longsword = new Longsword();
         Dagger dagger = new Dagger();
         TwoSword twoSword = new TwoSword();
@@ -197,6 +220,8 @@ public class RogueGame extends Application {
         BorderPane root = new BorderPane();
         root.setBottom(statsPane);
         BorderPane.setAlignment(statsPane, Pos.BOTTOM_LEFT);
+        initializeControlsScreen();
+        root.getChildren().add(controlsScreen);
 
         // make the GridPane to hold the tiles
         gridPane = new GridPane();
@@ -356,13 +381,60 @@ public class RogueGame extends Application {
         GridPane.setVgrow(playerLabel, Priority.ALWAYS);
     }
 
+    private boolean showingControls = false;
+    private Pane controlsScreen;
+
+    /**
+     * Initialize the controls screen.
+     */
+    private void initializeControlsScreen() {
+        controlsScreen = new Pane();
+        controlsScreen.setStyle("-fx-background-color: rgba(0, 0, 0, 0.8);");
+        controlsScreen.setPrefSize(400, 400);
+        controlsScreen.setVisible(false);
+
+        Label title = new Label("Game controls");
+        title.setStyle("-fx-font-size: 24px; -fx-text-fill: blue;");
+        title.setLayoutX(300);
+        title.setLayoutY(50);
+
+        Label controlsText = new Label("""
+                W - Move Up
+                S - Move Down
+                A - Move Left
+                D - Move Right
+                SPACE - Attack
+                I - Switch Inventory
+                H - Previous Item
+                L - Next Item
+                ESC - Toggle Controls
+                """);
+        controlsText.setStyle("-fx-font-size: 18px; -fx-text-fill: blue;");
+        controlsText.setLayoutX(250);
+        controlsText.setLayoutY(100);
+
+        controlsScreen.getChildren().addAll(title, controlsText);
+    }
+
+    private boolean usingArmorInventory = false; // Tracks whether the player is using the armor inventory
+
     /**
      * Registers a key press on the keyboard. Controls for the game are WASD.
      * After player moves, check for event tile.
      *
-     * @param event         Event handler for keyboard.
+     * @param event Event handler for keyboard.
      */
     private void handleKeyPressed(KeyEvent event) {
+        if (event.getCode() == KeyCode.ESCAPE) {
+            showingControls = !showingControls;
+            controlsScreen.setVisible(showingControls);
+            return;
+        }
+
+        if (showingControls) {
+            return;
+        }
+
         hunger.takeTurn();
         Monster currentMonster = null;
 
@@ -371,6 +443,7 @@ public class RogueGame extends Application {
             case S -> player.move(0, 1);
             case A -> player.move(-1, 0);
             case D -> player.move(1, 0);
+
             case SPACE -> {
                 Optional<Monster> deadMonster = player.attackMonster(presentMonsters);
                 if (deadMonster.isPresent()) {
@@ -383,33 +456,52 @@ public class RogueGame extends Application {
                     }
                 }
 
-                Item currentItem = inventory.get(invIndex);
-                if (currentItem instanceof Stick) {
-                    if (((Stick) currentItem).hasCharges()) {
-                        ((Stick) currentItem).useStick(currentMonster);
-                    }
-                    Weapon weapon = (Weapon) currentItem;
-                    int[] diceVals = weapon.getDice();
-                    player.setDmg(diceVals[0], diceVals[1]);
-                }
+                Inventory activeInventory = usingArmorInventory ? armorInventory : inventory;
+                if (!activeInventory.isEmpty()) {
+                    Item currentItem = activeInventory.get(invIndex);
 
-                if (currentItem instanceof Food) {
-                    currentItem.use();
+                    if (currentItem instanceof Stick) {
+                        if (((Stick) currentItem).hasCharges()) {
+                            ((Stick) currentItem).useStick(currentMonster);
+                        }
+                        Weapon weapon = (Weapon) currentItem;
+                        int[] diceVals = weapon.getDice();
+                        player.setDmg(diceVals[0], diceVals[1]);
+                    }
+
+                    if (currentItem instanceof Food) {
+                        currentItem.use();
+                    }
+                }
+            }
+
+            case I -> {
+                // toggle switch between weapon and armor inventory
+                usingArmorInventory = !usingArmorInventory;
+
+                Inventory activeInventory = usingArmorInventory ? armorInventory : inventory;
+                if (activeInventory.isEmpty()) {
+                    invIndex = 0;
+                    invText.set(usingArmorInventory ? "No armor equipped" : "Fists");
+                } else {
+                    invIndex = Math.min(invIndex, activeInventory.getSize() - 1);
+                    invText.set("Currently equipped: " + activeInventory.get(invIndex).getName());
                 }
             }
 
             case H, L -> {
-                if (inventory.isEmpty()) {
-                    invText.set("Fists");
+                Inventory activeInventory = usingArmorInventory ? armorInventory : inventory;
+
+                if (activeInventory.isEmpty()) {
+                    invText.set(usingArmorInventory ? "No armor equipped" : "Fists");
                 } else {
                     if (event.getCode() == KeyCode.H) {
-                        invIndex = (invIndex - 1 + inventory.getSize()) % inventory.getSize();
+                        invIndex = (invIndex - 1 + activeInventory.getSize()) % activeInventory.getSize();
                     } else if (event.getCode() == KeyCode.L) {
-                        invIndex = (invIndex + 1) % inventory.getSize();
+                        invIndex = (invIndex + 1) % activeInventory.getSize();
                     }
 
-                    Item currentItem = inventory.get(invIndex);
-                    invText.set("Currently equipped: " + currentItem.getName());
+                    invText.set("Currently equipped: " + activeInventory.get(invIndex).getName());
                 }
             }
         }
@@ -429,7 +521,6 @@ public class RogueGame extends Application {
 
         checkForGold(player.getX(), player.getY());
     }
-
 
     private void checkForGold(int x, int y) {
         Tile tile = floor.getTile(x, y);
