@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import edu.depaul.rogue.character.CharacterController;
 import edu.depaul.rogue.character.CharacterFactory;
+import edu.depaul.rogue.dice.Dice;
 import edu.depaul.rogue.floor.Floor;
 import edu.depaul.rogue.floor.FloorFactory;
 import edu.depaul.rogue.floor.Tile;
@@ -57,6 +58,9 @@ public class RogueGame extends Application {
     private StringProperty invText = new SimpleStringProperty("Currently equipped: Fists");
     private Hunger hunger = new Hunger();
     private Label hungerLabel;
+    private Label floorNumLabel;
+    private StringProperty floorNumText= new SimpleStringProperty("Floor: 1");
+    private int floorNumCount = 1;
 
     /**
      * Starts the JavaFX application by initializing the stage and scene. This method
@@ -151,12 +155,19 @@ public class RogueGame extends Application {
         // gold label
         goldLabel = new Label("Gold: ");
         goldLabel.textProperty().bind(goldText);
+
+        // floor number label
+        floorNumLabel = new Label("Floor: ");
+        floorNumLabel.textProperty().bind(floorNumText);
         
         // inventory items
         Longsword longsword = new Longsword();
         Dagger dagger = new Dagger();
         TwoSword twoSword = new TwoSword();
         Mace mace = new Mace();
+        Stick fireStick = new Stick("Fire Stick", 1, 6, 6, Dice.roll(1, 5)+3, new FireStickEffect());
+        Stick strikingStick = new Stick("Striking Stick", 1, 2, 8, Dice.roll(1, 5)+3, new StrikingStickEffect());
+        Stick lightningStick = new Stick("Lightning Stick", 1, 1, 5, Dice.roll(1, 8), new LightningStickEffect());
         Food food = new Food(hunger, inventory);
 
         inventory.addItem(longsword);
@@ -164,6 +175,9 @@ public class RogueGame extends Application {
         inventory.addItem(twoSword);
         inventory.addItem(mace);
         inventory.addItem(food);
+        inventory.addItem(strikingStick);
+        inventory.addItem(lightningStick);
+        inventory.addItem(fireStick);
 
         invLabel = new Label();
         invLabel.textProperty().bind(invText);
@@ -178,6 +192,7 @@ public class RogueGame extends Application {
         statsPane.add(invLabel, 1, 3);
         statsPane.add(hungerLabel, 0, 2);
         statsPane.add(goldLabel, 1, 4);
+        statsPane.add(floorNumLabel, 1, 5);
 
         BorderPane root = new BorderPane();
         root.setBottom(statsPane);
@@ -348,22 +363,39 @@ public class RogueGame extends Application {
      * @param event         Event handler for keyboard.
      */
     private void handleKeyPressed(KeyEvent event) {
-    	hunger.takeTurn();
+        hunger.takeTurn();
+        Monster currentMonster = null;
+
         switch (event.getCode()) {
-	        case W -> player.move(0, -1);
-	        case S -> player.move(0, 1);
-	        case A -> player.move(-1, 0);
-	        case D -> player.move(1, 0);
+            case W -> player.move(0, -1);
+            case S -> player.move(0, 1);
+            case A -> player.move(-1, 0);
+            case D -> player.move(1, 0);
             case SPACE -> {
-            	Optional<Monster> deadMonster = player.attackMonster(presentMonsters);
-            	if (deadMonster.isPresent()) {
-            		clearFloorRender();
-            		renderFloor(floor,gridPane);
-            		renderPlayer();
-	            	for (Monster monster:presentMonsters.values()) {
-	            		renderMonster(monster);
-	            	}
-            	}
+                Optional<Monster> deadMonster = player.attackMonster(presentMonsters);
+                if (deadMonster.isPresent()) {
+                    clearFloorRender();
+                    renderFloor(floor, gridPane);
+                    renderPlayer();
+                    for (Monster monster : presentMonsters.values()) {
+                        renderMonster(monster);
+                        currentMonster = monster;
+                    }
+                }
+
+                Item currentItem = inventory.get(invIndex);
+                if (currentItem instanceof Stick) {
+                    if (((Stick) currentItem).hasCharges()) {
+                        ((Stick) currentItem).useStick(currentMonster);
+                    }
+                    Weapon weapon = (Weapon) currentItem;
+                    int[] diceVals = weapon.getDice();
+                    player.setDmg(diceVals[0], diceVals[1]);
+                }
+
+                if (currentItem instanceof Food) {
+                    currentItem.use();
+                }
             }
 
             case H, L -> {
@@ -375,31 +407,29 @@ public class RogueGame extends Application {
                     } else if (event.getCode() == KeyCode.L) {
                         invIndex = (invIndex + 1) % inventory.getSize();
                     }
+
                     Item currentItem = inventory.get(invIndex);
                     invText.set("Currently equipped: " + currentItem.getName());
-                    if (currentItem instanceof Weapon) {
-                        Weapon weapon = (Weapon) currentItem;
-                        int[] diceVals = weapon.getDice();
-                        player.setDmg(diceVals[0], diceVals[1]);
-                    }
                 }
             }
         }
 
         renderFloor(floor, gridPane);
-
         renderPlayer();
 
         if (eventManager.triggerEvent(floor)) {
-        	presentMonsters.clear();
-        	clearFloorRender();
-        	renderFloor(floor, gridPane);
-        	renderPlayer();
-        	generateMonsters();
+            presentMonsters.clear();
+            clearFloorRender();
+            renderFloor(floor, gridPane);
+            renderPlayer();
+            generateMonsters();
+            floorNumCount++;
+            floorNumText.set("Floor: " + floorNumCount);
         }
 
         checkForGold(player.getX(), player.getY());
     }
+
 
     private void checkForGold(int x, int y) {
         Tile tile = floor.getTile(x, y);
